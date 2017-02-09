@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="MainApp.Pages.MainOperation.AddEmployeeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MainApp.Pages.MainOperation"
+             xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <mvvmc:Region ControllerID="AddWizard" />
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+            <Button Command="{Binding PrevCommand}" Content="{Binding PrevCaption}"></Button>
+            <Button Margin="10,0" Command="{Binding NextCommand}" Content="{Binding NextCaption}"></Button>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

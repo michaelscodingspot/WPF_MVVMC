@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="MainApp.Pages.AllEmployees.InfoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MainApp.Pages.AllEmployees"
+             xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <TextBlock Text="First Name: "/>
+            <TextBlock DataContext="{mvvmc:ViewBagBinding Path=Employee}" Text="{Binding FirstName}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <TextBlock Text="Last Name: "/>
+            <TextBlock DataContext="{mvvmc:ViewBagBinding Path=Employee}" Text="{Binding LastName}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="2">
+            <TextBlock Text="Salary: "/>
+            <TextBlock DataContext="{mvvmc:ViewBagBinding Path=Employee}" Text="{Binding Salary}"/>
+        </StackPanel>
+        
+        <StackPanel VerticalAlignment="Bottom" Grid.Row="3">
+            <Button Width="140" HorizontalAlignment="Left" Margin="0,5"
+                    Command="{mvvmc:NavigateCommand ControllerID='AllEmployees', Action='SelectEmployee'}">Back to Employees</Button>
+            <Button Width="140" HorizontalAlignment="Left" Margin="0,5"
+                    Command="{mvvmc:NavigateCommand ControllerID='MainOperation'}">Home</Button>
+        </StackPanel>
+    </Grid>
+</UserControl>
