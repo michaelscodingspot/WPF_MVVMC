@@ -24,8 +24,6 @@ namespace MainApp
         public MainWindow()
         {
             InitializeComponent();
-            var mngr = MVVMC.NavigationServiceProvider.GetNavigationServiceInstance();
-            mngr.Initialize("MainApp.Pages");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

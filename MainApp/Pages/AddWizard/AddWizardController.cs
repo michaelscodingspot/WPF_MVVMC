@@ -74,7 +74,7 @@ namespace MainApp.Pages.AddWizard
             base.Navigate(target, null);
         }
 
-        public void Initial()
+        public override void Initial()
         {
             ExecuteNavigation();
         }

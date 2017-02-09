@@ -9,7 +9,7 @@ namespace MainApp.Pages.MainOperation
 {
     public class MainOperationController : Controller
     {
-        public void Initial()
+        public override void Initial()
         {
             ExecuteNavigation();
         }

@@ -1,4 +1,5 @@
-﻿using MVVMC;
+﻿using MainApp.Pages.AddWizard;
+using MVVMC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,9 @@ namespace MainApp.Pages.MainOperation
                 if (_nextCommand == null)
                     _nextCommand = new DelegateCommand(() =>
                     {
-                        NavigationServiceProvider.GetNavigationServiceInstance().GetController<AddWizard.AddWizardController>().Next();
+                        INavigationService navigationService = NavigationServiceProvider.GetNavigationServiceInstance();
+                        AddWizardController controller = navigationService.GetController<AddWizard.AddWizardController>();
+                        controller.Next();
                         RefreshButtons();
                     },
                     () =>

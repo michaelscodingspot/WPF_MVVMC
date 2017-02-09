@@ -4,8 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace MVVMC
 {
@@ -14,7 +16,8 @@ namespace MVVMC
         private MVVMCNavigationService _navigationService;
         private Type _thisType;
         private MethodInfo[] _methods;
-        
+        private Dispatcher _dispatcher;
+
         public INavigationService NavigationService { get { return _navigationService; } }
 
         public string ID { get; internal set; }
@@ -24,6 +27,7 @@ namespace MVVMC
             _thisType = this.GetType();
             _methods = _thisType.GetMethods();
             _navigationService = MVVMC.MVVMCNavigationService.GetInstance();
+            _dispatcher = Dispatcher.CurrentDispatcher;
         }
 
         public void NavigateToInitial(object parameter = null)
@@ -60,18 +64,31 @@ namespace MVVMC
 
         private void ExecuteNavigationInternal(string pageName, object parameter, Dictionary<string, object> viewBag = null)
         {
-            var target = _navigationService.CreateViewAndViewModel(ID, pageName);
-
-            var vm = target.DataContext;
-            if (vm != null)
+            RunOnUIThread(() =>
             {
-                var mvvmcVM = vm as MVVMCViewModel;
-                mvvmcVM.ViewBag = viewBag;
-                mvvmcVM.NavigationParameter = parameter;
-                mvvmcVM.Initialize();
-            }
+                var target = _navigationService.CreateViewAndViewModel(ID, pageName);
 
-            ChangeContentInRegion(target);
+                var vm = target.DataContext;
+                if (vm != null)
+                {
+                    var mvvmcVM = vm as MVVMCViewModel;
+                    mvvmcVM.ViewBag = viewBag;
+                    mvvmcVM.NavigationParameter = parameter;
+                    mvvmcVM.Initialize();
+                }
+
+                ChangeContentInRegion(target);
+            });
+        }
+
+        private void RunOnUIThread(Action act)
+        {
+            if (Thread.CurrentThread == _dispatcher.Thread)
+                act();
+            else
+            {
+                _dispatcher.Invoke(act);
+            }
         }
 
         /// <summary>
@@ -80,6 +97,7 @@ namespace MVVMC
         /// </summary>
         private void ChangeContentInRegion(object content)
         {
+            var currentThread = Thread.CurrentThread;
             Region navArea = _navigationService.FindRegionByID(ID);
             navArea.Content = content;
         }
@@ -93,6 +111,8 @@ namespace MVVMC
         {
             return _navigationService.GetCurrentPageNameByControllerID(ID);
         }
+
+        public abstract void Initial();
 
     }
 }

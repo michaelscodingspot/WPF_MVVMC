@@ -23,7 +23,7 @@ namespace MainApp.Pages.AllEmployees
             ExecuteNavigation();
         }
 
-        public void Initial()
+        public override void Initial()
         {
             SelectEmployee();
         }

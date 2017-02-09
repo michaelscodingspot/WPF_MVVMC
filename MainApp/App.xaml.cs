@@ -13,5 +13,11 @@ namespace MainApp
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            var mngr = MVVMC.NavigationServiceProvider.GetNavigationServiceInstance();
+            mngr.Initialize("MainApp.Pages");
+        }
     }
 }
