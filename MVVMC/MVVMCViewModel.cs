@@ -8,7 +8,15 @@ namespace MVVMC
 {
     public abstract class MVVMCViewModel : BaseViewModel
     {
+        public Dictionary<string, object> ViewBag { get; set; }
+        public object NavigationParameter { get; set; }
         protected IController _controller;
+
+        public virtual void Initialize()
+        {
+            //This is called after NavigationParameter and ViewBag are set
+        }
+
         public virtual void SetController(IController controller)
         {
             _controller = controller;
@@ -17,13 +25,6 @@ namespace MVVMC
         public IController GetController()
         {
             return _controller;
-        }
-
-        public Dictionary<string, object> ViewBag { get; set; }
-        public object NavigationParameter { get; set; }
-
-        public virtual void Initialize()
-        {
         }
     }
 

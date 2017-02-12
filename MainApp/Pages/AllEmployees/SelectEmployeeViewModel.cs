@@ -21,8 +21,6 @@ namespace MainApp.Pages.AllEmployees
                     _selectEmployeeCommand = new DelegateCommand(() =>
                     {
                         GetExactController().Info(SelectedEmployee);
-                        //Alternatively call:
-                        //MVVMC.NavigationServiceProvider.GetNavigationServiceInstance().NavigateWithController<InfoViewModel>(SelectedEmployee);
                     },
                     ()=>
                     {

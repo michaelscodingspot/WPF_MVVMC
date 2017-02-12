@@ -27,9 +27,9 @@ namespace MVVMC
             _methods = _thisType.GetMethods();
         }
 
-        public void NavigateToInitial(object parameter = null)
+        public void NavigateToInitial()
         {
-            Navigate("Initial", parameter);
+            Navigate("Initial", null);
         }
 
         public void Navigate(string action, object parameter)

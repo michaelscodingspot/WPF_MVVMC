@@ -26,7 +26,7 @@ namespace MVVMC
             if (Action == null)
                 _navigationService.Value.GetController(ControllerID).NavigateToInitial();
             else
-                _navigationService.Value.GetController(ControllerID).Navigate(Action, null);
+                _navigationService.Value.GetController(ControllerID).Navigate(Action, parameter);
         }
 
         public override object ProvideValue(IServiceProvider serviceProvider)

@@ -5,6 +5,6 @@
         string ID { get; }
         MVVMCViewModel GetCurrentViewModel();
         void Navigate(string action, object parameter);
-        void NavigateToInitial(object parameter = null);
+        void NavigateToInitial();
     }
 }

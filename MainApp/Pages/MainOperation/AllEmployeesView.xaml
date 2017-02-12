@@ -7,8 +7,5 @@
              mc:Ignorable="d" 
              xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-      <mvvmc:Region ControllerID="AllEmployees" />
-
-    </Grid>
+    <mvvmc:Region ControllerID="AllEmployees" />
 </UserControl>
