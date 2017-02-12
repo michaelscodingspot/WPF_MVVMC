@@ -13,12 +13,11 @@ namespace MVVMC
 {
     public abstract class Controller : IController
     {
-        private MVVMCNavigationService _navigationService;
         private Type _thisType;
         private MethodInfo[] _methods;
-        private Dispatcher _dispatcher;
 
-        public INavigationService NavigationService { get { return _navigationService; } }
+        public INavigationService NavigationService { get; set; }
+        public INavigationExecutor NavigationExecutor { get; set; }
 
         public string ID { get; internal set; }
 
@@ -26,8 +25,6 @@ namespace MVVMC
         {
             _thisType = this.GetType();
             _methods = _thisType.GetMethods();
-            _navigationService = MVVMC.MVVMCNavigationService.GetInstance();
-            _dispatcher = Dispatcher.CurrentDispatcher;
         }
 
         public void NavigateToInitial(object parameter = null)
@@ -64,52 +61,17 @@ namespace MVVMC
 
         private void ExecuteNavigationInternal(string pageName, object parameter, Dictionary<string, object> viewBag = null)
         {
-            RunOnUIThread(() =>
-            {
-                var target = _navigationService.CreateViewAndViewModel(ID, pageName);
-
-                var vm = target.DataContext;
-                if (vm != null)
-                {
-                    var mvvmcVM = vm as MVVMCViewModel;
-                    mvvmcVM.ViewBag = viewBag;
-                    mvvmcVM.NavigationParameter = parameter;
-                    mvvmcVM.Initialize();
-                }
-
-                ChangeContentInRegion(target);
-            });
+            NavigationExecutor.ExecuteNavigation(ID, pageName, parameter, viewBag);
         }
-
-        private void RunOnUIThread(Action act)
-        {
-            if (Thread.CurrentThread == _dispatcher.Thread)
-                act();
-            else
-            {
-                _dispatcher.Invoke(act);
-            }
-        }
-
-        /// <summary>
-        /// This is the only method in the infrastructure to actually do the navigation by changing Content of NavigationArea.
-        /// The is on purpose since only the controller related to a Navigation Area should be able to change its Content.
-        /// </summary>
-        private void ChangeContentInRegion(object content)
-        {
-            var currentThread = Thread.CurrentThread;
-            Region navArea = _navigationService.FindRegionByID(ID);
-            navArea.Content = content;
-        }
-
+        
         public MVVMCViewModel GetCurrentViewModel()
         {
-            return _navigationService.GetCurrentViewModelByControllerID(ID);
+            return NavigationService.GetCurrentViewModelByControllerID(ID);
         }
 
         protected string GetCurrentPageName()
         {
-            return _navigationService.GetCurrentPageNameByControllerID(ID);
+            return NavigationService.GetCurrentPageNameByControllerID(ID);
         }
 
         public abstract void Initial();

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace MVVMC
 {
-    internal class MVVMCNavigationService : INavigationService
+    internal class MVVMCNavigationService : INavigationService, INavigationExecutor
     {
         #region SINGLETON
         private static MVVMCNavigationService _instance;
@@ -31,12 +33,14 @@ namespace MVVMC
         List<Controller> _controllers = new List<Controller>();
         private string _pagesNamespace;
         private Type[] _typesInPages;
+        private Dispatcher _dispatcher;
 
         public void Initialize(string pagesNamespace)
         {
             Assembly assembly = Assembly.GetCallingAssembly();
             _pagesNamespace = pagesNamespace;
             _typesInPages = assembly.GetTypes().Where(type => type.Namespace.ToLower().StartsWith(_pagesNamespace.ToLower())).ToArray();
+            _dispatcher = Dispatcher.CurrentDispatcher;
         }
 
         public void AddRegion(Region navArea)
@@ -55,6 +59,8 @@ namespace MVVMC
             var instance = Activator.CreateInstance(type);
             var controller = instance as Controller;
             controller.ID = controllerID;
+            controller.NavigationService = this;
+            controller.NavigationExecutor = this;
             _controllers.Add(controller);
         }
 
@@ -152,5 +158,43 @@ namespace MVVMC
             var instance = Activator.CreateInstance(type);
             return instance as FrameworkElement;
         }
+
+        public void ExecuteNavigation(string controllerID, string pageName, object parameter, Dictionary<string, object> viewBag = null)
+        {
+            RunOnUIThread(() =>
+            {
+                var target = CreateViewAndViewModel(controllerID, pageName);
+
+                var vm = target.DataContext;
+                if (vm != null)
+                {
+                    var mvvmcVM = vm as MVVMCViewModel;
+                    mvvmcVM.ViewBag = viewBag;
+                    mvvmcVM.NavigationParameter = parameter;
+                    mvvmcVM.Initialize();
+                }
+
+                ChangeContentInRegion(target, controllerID);
+            });
+        }
+
+        private void ChangeContentInRegion(object content, string controllerID)
+        {
+            var currentThread = Thread.CurrentThread;
+            Region navArea = FindRegionByID(controllerID);
+            navArea.Content = content;
+        }
+
+        private void RunOnUIThread(Action act)
+        {
+            if (Thread.CurrentThread == _dispatcher.Thread)
+                act();
+            else
+            {
+                _dispatcher.Invoke(act);
+            }
+        }
+
+
     }
 }

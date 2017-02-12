@@ -8,13 +8,13 @@ namespace MVVMC
 {
     public abstract class MVVMCViewModel : BaseViewModel
     {
-        protected Controller _controller;
-        public virtual void SetController(Controller controller)
+        protected IController _controller;
+        public virtual void SetController(IController controller)
         {
             _controller = controller;
         }
 
-        public Controller GetController()
+        public IController GetController()
         {
             return _controller;
         }
@@ -30,7 +30,7 @@ namespace MVVMC
     public class MVVMCViewModel<TController> : MVVMCViewModel where TController : Controller
     {
         TController _exactController = null;
-        public override void SetController(Controller controller)
+        public override void SetController(IController controller)
         {
             _controller = controller;
             _exactController = controller as TController;

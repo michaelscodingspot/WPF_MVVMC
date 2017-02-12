@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="BaseViewModel.cs" />
     <Compile Include="IController.cs" />
+    <Compile Include="INavigationExecutor.cs" />
     <Compile Include="NavigationServiceProvider.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="NavigateCommand.cs" />
