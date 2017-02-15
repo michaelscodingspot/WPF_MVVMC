@@ -1,7 +1,5 @@
 # WPF_MVVMC
-A WPF framework for navigation between pages with MVC-like pattern
-
-This project is a lightweight infrastructure which implements a MVVMC navigation framework in WPF.
+This project is a lightweight __navigation__ infrastructure which implements an MVVMC navigation framework in WPF.
 
 MVVMC stands for Model-View-ViewModel-Controller.
 The idea is to combine Controllers with MVVM that are responsible for navigation.
