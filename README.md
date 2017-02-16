@@ -5,6 +5,8 @@ MVVMC stands for Model-View-ViewModel-Controller.
 The idea is to combine Controllers with MVVM that are responsible for navigation.
 All the concepts mimic the routing system in Asp.NET Core. Everything is done by naming convention.
 
+For documentation see the [blog post on mvvmc framework].
+
 ##Regions:
 A Region is a Control which simply contains a content presenter with dynamic content.
 Each region area is controlled by a single controller.
@@ -24,3 +26,5 @@ NavigationServiceProvider.GetNavigationServiceInstance().GetController<TControll
 
 ##Example of use
 "MainApp" contains a simple application that demonstrates all possible usages of MVVMC
+
+[blog post on mvvmc framework]: http://michaelscodingspot.com/2017/02/15/wpf-page-navigation-like-mvc-part-2-mvvmc-framework/
