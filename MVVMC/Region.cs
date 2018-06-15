@@ -41,7 +41,7 @@ namespace MVVMC
         {
             if (DesignerProperties.GetIsInDesignMode(this))
                 return;
-
+             
             _navigationService.CreateAndAddController(ControllerID);
             _navigationService.AddRegion(this);
             _navigationService.GetController(ControllerID).NavigateToInitial();
