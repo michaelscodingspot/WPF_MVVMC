@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +39,9 @@ namespace MVVMC
 
         private void OnRegionLoaded(object sender, RoutedEventArgs e)
         {
+            if (DesignerProperties.GetIsInDesignMode(this))
+                return;
+
             _navigationService.CreateAndAddController(ControllerID);
             _navigationService.AddRegion(this);
             _navigationService.GetController(ControllerID).NavigateToInitial();
