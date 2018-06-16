@@ -9,8 +9,6 @@ namespace MVVMC
 {
     public interface INavigationService
     {
-        void Initialize(string pagesNamespace);
-
         void NavigateWithController<TViewModel>(object parameter = null) where TViewModel : MVVMCViewModel;
 
         Controller GetController(string controllerID);

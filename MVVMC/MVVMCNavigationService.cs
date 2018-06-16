@@ -24,23 +24,46 @@ namespace MVVMC
                 if (_instance != null)
                     return _instance;
                 _instance = new MVVMCNavigationService();
+
                 return _instance;
             }
         }
         #endregion SINGLETON
 
+        private List<Type> _controllerTypes;
+        private List<Type> _viewModelTypes;
+        private List<Type> _viewTypes;
+
         List<Region> _regions = new List<Region>();
         List<Controller> _controllers = new List<Controller>();
-        private string _pagesNamespace;
-        private Type[] _typesInPages;
         private Dispatcher _dispatcher;
 
-        public void Initialize(string pagesNamespace)
+        private MVVMCNavigationService()
+        {
+            Initialize();
+        }
+
+        private void Initialize()
         {
             Assembly assembly = Assembly.GetCallingAssembly();
-            _pagesNamespace = pagesNamespace;
-            _typesInPages = assembly.GetTypes().Where(type => type.Namespace.ToLower().StartsWith(_pagesNamespace.ToLower())).ToArray();
+            var assemblyTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(asm => asm.GetTypes());
+            _controllerTypes = assemblyTypes.Where(t => t.BaseType?.FullName == "MVVMC.Controller").ToList();
+            
+
+            _viewModelTypes = assemblyTypes.Where(t => t.BaseType != null && t.BaseType?.FullName != null && t.BaseType.FullName.StartsWith("MVVMC.MVVMCViewModel")).ToList();
+            var viewModelNamespaces = _viewModelTypes.Select(vm => vm.Namespace);
+            _viewTypes = assemblyTypes.Where(t =>
+                viewModelNamespaces.Contains(t.Namespace) &&
+                t.Name.EndsWith("View", StringComparison.InvariantCultureIgnoreCase)).ToList();
+            
             _dispatcher = Dispatcher.CurrentDispatcher;
+        }
+
+        private string GetControllerName(Type controllerType)
+        {
+            if (!controllerType.Name.EndsWith("Controller"))
+                throw new Exception($"Please change the name of '{controllerType.Name}'. All controllers must end with 'Controller' postfix.");
+            return controllerType.Name.Substring(0, controllerType.Name.Length - ("Controller".Length));
         }
 
         public void AddRegion(Region navArea)
@@ -55,13 +78,19 @@ namespace MVVMC
 
         internal void CreateAndAddController(string controllerID)
         {
-            var type = _typesInPages.First(elem => elem.Name.Equals(controllerID + "Controller", StringComparison.CurrentCultureIgnoreCase));
+            Type type = GetControllerTypeById(controllerID);
             var instance = Activator.CreateInstance(type);
             var controller = instance as Controller;
             controller.ID = controllerID;
             controller.NavigationService = this;
             controller.NavigationExecutor = this;
             _controllers.Add(controller);
+        }
+
+        private Type GetControllerTypeById(string controllerID)
+        {
+            return _controllerTypes.First(c =>
+                GetControllerName(c).Equals(controllerID, StringComparison.CurrentCultureIgnoreCase));
         }
 
         internal void RemoveController(string controllerID)
@@ -137,24 +166,28 @@ namespace MVVMC
 
         internal MVVMCViewModel CreateViewModelInstance(string controllerID, string pageName)
         {
-            var type = _typesInPages.FirstOrDefault(
-                elem => elem.Namespace.Equals(_pagesNamespace + "." + controllerID, StringComparison.CurrentCultureIgnoreCase)
-                && elem.Name.Equals(pageName + "ViewModel", StringComparison.CurrentCultureIgnoreCase));
+            var controllerNamespace = GetControllerTypeById(controllerID).Namespace;
+            var type = _viewModelTypes.FirstOrDefault(vm =>
+                vm.Namespace == controllerNamespace 
+                && vm.Name.Equals(pageName + "ViewModel", StringComparison.CurrentCultureIgnoreCase));
+
             if (type == null)
                 return null;
 
             var instance = Activator.CreateInstance(type);
 
             var controller = GetController(controllerID);
-            var vm = instance as MVVMCViewModel;
-            vm.SetController(controller);
-            return vm;
+            var viewModel = instance as MVVMCViewModel;
+            viewModel.SetController(controller);
+            return viewModel;
         }
 
         private FrameworkElement CreateViewInstance(string controllerName, string pageName)
         {
-            var type = _typesInPages.First(elem => elem.Namespace.Equals(_pagesNamespace + "." + controllerName, StringComparison.CurrentCultureIgnoreCase )
-            && elem.Name.Equals(pageName + "View", StringComparison.CurrentCultureIgnoreCase));
+            var controllerNamespace = GetControllerTypeById(controllerName).Namespace;
+            var type = _viewTypes.FirstOrDefault(vm =>
+                vm.Namespace == controllerNamespace
+                && vm.Name.Equals(pageName + "View", StringComparison.CurrentCultureIgnoreCase));
             var instance = Activator.CreateInstance(type);
             return instance as FrameworkElement;
         }
