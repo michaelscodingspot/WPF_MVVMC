@@ -46,7 +46,7 @@ namespace MVVMC
         private void Initialize()
         {
             Assembly assembly = Assembly.GetCallingAssembly();
-            var assemblyTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(asm => asm.GetTypes());
+            var assemblyTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(GetLoadableTypes);
             _controllerTypes = assemblyTypes.Where(t => t.BaseType?.FullName == "MVVMC.Controller").ToList();
             
 
@@ -57,6 +57,22 @@ namespace MVVMC
                 t.Name.EndsWith("View", StringComparison.InvariantCultureIgnoreCase)).ToList();
             
             _dispatcher = Dispatcher.CurrentDispatcher;
+        }
+
+        /// <summary>
+        /// From https://haacked.com/archive/2012/07/23/get-all-types-in-an-assembly.aspx/
+        /// </summary>
+        private IEnumerable<Type> GetLoadableTypes(Assembly assembly)
+        {
+            if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                return e.Types.Where(t => t != null);
+            }
         }
 
         private string GetControllerName(Type controllerType)
