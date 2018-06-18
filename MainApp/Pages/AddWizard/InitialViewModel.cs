@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 
 namespace MainApp.Pages.AddWizard
 {
-    public class InitialViewModel :MVVMCViewModel
+    public class InitialViewModel :MVVMCViewModel, IAddEmployeeStep
     {
-        
+        public bool IsNextLegal(out string errorMsg)
+        {
+            errorMsg = null;
+            return true;
+        }
     }
 }

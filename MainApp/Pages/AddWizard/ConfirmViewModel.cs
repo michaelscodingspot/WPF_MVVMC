@@ -7,7 +7,12 @@ using MVVMC;
 
 namespace MainApp.Pages.AddWizard
 {
-    public class ConfirmViewModel : MVVMCViewModel
+    public class ConfirmViewModel : MVVMCViewModel, IAddEmployeeStep
     {
+        public bool IsNextLegal(out string errorMsg)
+        {
+            errorMsg = null;
+            return true;
+        }
     }
 }

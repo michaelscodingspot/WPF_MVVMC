@@ -7,7 +7,7 @@ using MVVMC;
 
 namespace MainApp.Pages.AddWizard
 {
-    public class LastNameViewModel : MVVMCViewModel
+    public class LastNameViewModel : MVVMCViewModel, IAddEmployeeStep
     {
         public string _lastName;
         public string LastName
@@ -18,6 +18,18 @@ namespace MainApp.Pages.AddWizard
                 _lastName= value;
                 OnPropertyChanged();
             }
+        }
+
+        public bool IsNextLegal(out string errorMsg)
+        {
+            if (string.IsNullOrEmpty(LastName))
+            {
+                errorMsg = "Last name can't be empty";
+                return false;
+            }
+
+            errorMsg = null;
+            return true;
         }
     }
 }

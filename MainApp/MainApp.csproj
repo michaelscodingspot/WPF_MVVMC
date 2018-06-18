@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Pages\AddWizard\IAddEmployeeStep.cs" />
     <Compile Include="Pages\MainOperation\MainOperationController.cs" />
     <Compile Include="Pages\AddWizard\AddWizardController.cs" />
     <Compile Include="Pages\AllEmployees\AllEmployeesController.cs" />

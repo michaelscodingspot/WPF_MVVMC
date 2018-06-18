@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace MainApp.Pages.AddWizard
 {
@@ -20,7 +21,7 @@ namespace MainApp.Pages.AddWizard
             switch (currentPage)
             {
                 case "Initial":
-                    NavigationService.NavigateWithController<MainOperation.InitialViewModel>();
+                    NavigationService.NavigateWithController<MainOperation.InitialViewModel>();//Back to initial (home) screen
                     return;
                 case "FirstName":
                     target = "Initial"; break;
@@ -38,6 +39,13 @@ namespace MainApp.Pages.AddWizard
 
         public void Next()
         {
+            var currentViewModel = GetCurrentViewModel() as IAddEmployeeStep;
+            if (!currentViewModel.IsNextLegal(out string error))
+            {
+                MessageBox.Show(error, "Can't move next");
+                return;
+            }
+
             _viewBag = null;
             string currentPage = GetCurrentPageName();
             string target = "Initial";
