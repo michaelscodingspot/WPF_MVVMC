@@ -188,6 +188,10 @@ namespace MVVMC
             var type = _viewTypes.FirstOrDefault(vm =>
                 vm.Namespace == controllerNamespace
                 && vm.Name.Equals(pageName + "View", StringComparison.CurrentCultureIgnoreCase));
+            if (type == null)
+            {
+                throw new Exception($"Navigation failed! Can't find a class {pageName + "View"} in namespace {controllerNamespace}. A UserControl/UIElement by that name should exist.");
+            }
             var instance = Activator.CreateInstance(type);
             return instance as FrameworkElement;
         }
