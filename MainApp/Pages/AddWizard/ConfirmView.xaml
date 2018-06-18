@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <StackPanel>
+        <StackPanel HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="First Name: "/>
                 <TextBlock DataContext="{mvvmc:ViewBagBinding Path=Employee}" Text="{Binding FirstName}"/>
@@ -23,7 +23,26 @@
             </StackPanel>
             <TextBlock>Are you sure you want to add the Employee? Click Next</TextBlock>
             <Button Width="140" HorizontalAlignment="Left" Margin="0,5"
-                Command="{mvvmc:NavigateCommand ControllerID='MainOperation'}">Cancel</Button>
+                Command="{mvvmc:NavigateCommand ControllerID='MainOperation'}">Cancel
+				<Button.Template>
+		            <ControlTemplate TargetType="Button">
+			            <TextBlock TextDecorations="Underline">
+				            <ContentPresenter />
+			            </TextBlock>
+		            </ControlTemplate>
+	            </Button.Template>
+	            <Button.Style>
+		            <Style TargetType="Button">
+			            <Setter Property="Foreground" Value="Blue" />
+			            <Style.Triggers>
+				            <Trigger Property="IsMouseOver" Value="true">
+					            <Setter Property="Foreground" Value="Red" />
+				            </Trigger>
+			            </Style.Triggers>
+		            </Style>
+	            </Button.Style>
+
+			</Button>
         </StackPanel>
 
     </Grid>

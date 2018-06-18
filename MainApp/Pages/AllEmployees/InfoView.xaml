@@ -29,7 +29,7 @@
         
         <StackPanel VerticalAlignment="Bottom" Grid.Row="3">
             <Button Width="140" HorizontalAlignment="Left" Margin="0,5"
-                    Command="{mvvmc:NavigateCommand ControllerID='AllEmployees', Action='SelectEmployee'}">Back to Employees</Button>
+                    Command="{mvvmc:NavigateCommand ControllerID='AllEmployees', Action='SelectEmployee'}">Back</Button>
             <Button Width="140" HorizontalAlignment="Left" Margin="0,5"
                     Command="{mvvmc:NavigateCommand ControllerID='MainOperation'}">Home</Button>
         </StackPanel>

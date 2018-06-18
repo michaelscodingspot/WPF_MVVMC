@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:MainApp.Pages.AddWizard"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel>
+    <StackPanel HorizontalAlignment="Center">
         <TextBlock>Enter first name:</TextBlock>
         <TextBox Text="{Binding FirstName}" HorizontalAlignment="Left" Width="150"></TextBox>
     </StackPanel>

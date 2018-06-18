@@ -4,7 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MainApp"
+		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+		FontSize="13"
         mc:Ignorable="d"
         Title="MainWindow" Height="360" Width="545">
     <Grid>
@@ -12,13 +18,19 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border Background="Beige" Padding="4" Grid.Row="0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                <Button Margin="5" Command="{mvvmc:NavigateCommand ControllerID='MainOperation'}">Home</Button>
-                <Button Margin="5" Command="{mvvmc:NavigateCommand ControllerID='MainOperation', Action='About'}">About</Button>
-            </StackPanel>
-        </Border>
-        <mvvmc:Region ControllerID="MainOperation" Grid.Row="1" Margin="5"/>
+		<materialDesign:Card Margin="5">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+				<Button Margin="5" Command="{mvvmc:NavigateCommand ControllerID='MainOperation'}">Home</Button>
+				<Button Margin="5" Command="{mvvmc:NavigateCommand ControllerID='MainOperation', Action='About'}">About</Button>
+			</StackPanel>
+		</materialDesign:Card>
+        <!--<Border Background="Beige" Padding="4" Grid.Row="0">
+            
+        </Border>-->
 
-    </Grid>
+		<materialDesign:Card Margin="5" Grid.Row="1" VerticalAlignment="Stretch" Padding="5">
+			<mvvmc:Region ControllerID="MainOperation" />
+		</materialDesign:Card>
+
+	</Grid>
 </Window>

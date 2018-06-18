@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:MainApp.Pages.AddWizard"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel>
+    <StackPanel HorizontalAlignment="Center">
         <TextBlock>Enter salary:</TextBlock>
         <TextBox Text="{Binding Salary}" HorizontalAlignment="Left" Width="150"></TextBox>
     </StackPanel>
