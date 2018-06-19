@@ -39,14 +39,14 @@ public class WizardController : Controller
 
 # Documentation
 
-* Quickstart
-* Regions
-* File naming
-* Controllers
-* Views
-* ViewModels
-* Navigation types
-* Parameter and ViewBag
+* [Quickstart](#quickstart)
+* [Regions](#regions)
+* [File naming](#file-naming)
+* [Controllers](#controllers)
+* [Views](#views)
+* [ViewModels](#viewmodels)
+* [Navigation types](#navigation-types)
+* [Parameter and ViewBag](#parameter-and-viewbag)
 
 ## Quickstart
 
