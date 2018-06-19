@@ -5,7 +5,7 @@ MVVMC adds to separation of concerns in a WPF project. Without controllers, when
 
 With Controllers, the ViewModel will request an "Action" from the Controller, which will execute the navigation according to the controller's logic. In our Wizard example, "SelectEmployee" will call "Next" and the controller will handle the navigation.
 
-```
+```csharp
 public class WizardController : Controller
 {
 	public void Next()
