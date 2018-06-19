@@ -12,7 +12,30 @@ In MVVMC, the View and ViewModel will request a navigation action from the contr
 
 See [this blog post on mvvmc framework] about the original motivation to create MVVMC.
 
-## Example
+# Documentation
+
+* [Quickstart](#quickstart)
+* [Regions](#regions)
+* [File naming](#file-naming)
+* [Controllers](#controllers)
+* [Views](#views)
+* [ViewModels](#viewmodels)
+* [Navigation types](#navigation-types)
+* [Parameter and ViewBag](#parameter-and-viewbag)
+
+## Quickstart
+
+Let's build a small Wizard application with 3 steps in it. First, create a WPF application and add the __Wpf.MVVMC__ Nuget package.
+
+Now, we'll need to add a [Region](#regions) to the MainWindow, like this:
+
+```
+sdfdsa
+```
+A Region is an area on the screen with dynamic content, controlled by a Controller.
+
+
+
 For example, your application is a Wizard and the current screen is the "SelectEmployee" step. When clicking "Next", the next step should appear - EditEmployee. With Controllers, the ViewModel will request an "Action" from the Controller, which will execute the navigation according to the controller's logic:
 
 ```csharp
@@ -34,21 +57,6 @@ public class WizardController : Controller
 		ExecuteNavigation();
 	}
 ````
-
-# Documentation
-
-* [Quickstart](#quickstart)
-* [Regions](#regions)
-* [File naming](#file-naming)
-* [Controllers](#controllers)
-* [Views](#views)
-* [ViewModels](#viewmodels)
-* [Navigation types](#navigation-types)
-* [Parameter and ViewBag](#parameter-and-viewbag)
-
-## Quickstart
-
-
 ## Regions:
 A Region is a Control which simply contains a content presenter with dynamic content.
 Each region area is controlled by a single controller.
