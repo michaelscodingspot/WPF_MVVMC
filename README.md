@@ -1,9 +1,21 @@
 # Wpf.MVVMC
+
+
+[![Build status](https://img.shields.io/nuget/v/Wpf.Mvvmc.svg)](https://www.nuget.org/packages/Wpf.MVVMC/)
+
+NuGet: `Instaqll-Package Wpf.MVVMC`
+
+## Description
 This project is a navigation framework for WPF, which implements the MVVMC pattern. MVVMC adds Controllers to MVVM, which are responsible for navigation and switching between views (screens or parts of screen).
 
-MVVMC adds to separation of concerns in a WPF project. Without controllers, when a View needs to change, either the View or the ViewModel will create the new View/ViewModel which will replace them. For example, your application is a Wizard and the current screen is the "SelectEmployee" step. When clicking "Next", the next step should appear. However, the Next Command is implemented in "SelectEmployee", so it has to know about and create the next step.
+In MVVMC, the View and ViewModel will request a navigation action from the controller. The controller will create the new View and ViewModel. This way, we achieve a separation of concerns, and the View & ViewModel are responsible only to themselves, and don't create other Views.
 
-With Controllers, the ViewModel will request an "Action" from the Controller, which will execute the navigation according to the controller's logic. In our Wizard example, "SelectEmployee" will call "Next" and the controller will handle the navigation.
+See [this blog post on mvvmc framework] about the original motivation to create MVVMC.
+
+## Example
+For example, your application is a Wizard and the current screen is the "SelectEmployee" step. When clicking "Next", the next step should appear - EditEmployee. However, the Next Command is implemented in "SelectEmployee" ViewModel, so it has to know about and create the next step.
+
+With Controllers, the ViewModel will request an "Action" from the Controller, which will execute the navigation according to the controller's logic. With Controllers, "SelectEmployee" will call "Next" and the controller will handle the navigation:
 
 ```csharp
 public class WizardController : Controller
@@ -27,7 +39,7 @@ public class WizardController : Controller
 
 
 
-For documentation see [this blog post on mvvmc framework].
+
 
 ## Regions:
 A Region is a Control which simply contains a content presenter with dynamic content.
