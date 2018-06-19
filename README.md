@@ -3,7 +3,7 @@
 
 [![Build status](https://img.shields.io/nuget/v/Wpf.Mvvmc.svg)](https://www.nuget.org/packages/Wpf.MVVMC/)
 
-NuGet: `Instaqll-Package Wpf.MVVMC`
+NuGet: `Install-Package Wpf.MVVMC`
 
 ## Description
 This project is a navigation framework for WPF, which implements the MVVMC pattern. MVVMC adds Controllers to MVVM, which are responsible for navigation and switching between views (screens or parts of screen).
