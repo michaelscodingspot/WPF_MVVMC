@@ -153,7 +153,7 @@ With just a little bit of styling, the resulting program looks like this:
 
 
 ## Regions:
-A Region is a Control which simply contains a content presenter with dynamic content. On navigation, the content changes to the target View. Each region area is controlled by a single controller, which is specific by the __ControllerID__ property.
+A Region is a Control which simply contains a content presenter with dynamic content. On navigation, the content changes to the target View. Each region area is controlled by a single controller, which is specified by the __ControllerID__ property.
 ```xaml
 xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
 ...
@@ -184,7 +184,7 @@ Wpf.MVVMC is convention based. The naming rules are:
 2. Views and ViewModels are controlled by a single Controller and should be in the same namespace as the controller.
 3. A pair of a View and a ViewModel are called a Page, and should be named XXXView and XXXViewModel, with 'XXX' being the page's name.
 
-It's recommended to create a separate folder for each Controller. This folder will container the Controller class with the Views and ViewModels relevant to that Controller. This way, they will have a common and unique namespace.
+It's recommended to create a separate folder for each Controller. This folder will contain the Controller class with the Views and ViewModels relevant to that Controller. This way, they will have a common and unique namespace.
 
 ## Controllers:
 A controller contains the actual navigation logic. Each controller is connected to a single Region and the navigation executes by replacing the Region's content.
