@@ -84,14 +84,83 @@ public class WizardController : Controller
 }
 ```
 
-__ExecuteNavigation()__ depends on the calling method name. When called from "FirstStep()" for example, it will navigate to "FirstStep" page. As mentioned, Wpf.MVVMC is name-convention based.
-Navigating to "FirstStep" page means we need a UI element called "FirstStepView" and a view model called "FirstStepViewModel".
+__ExecuteNavigation()__ depends on the calling method name. When called from "FirstStep()" for example, it will navigate to "FirstStep" page. Which means it will create __FirstStepView__ and __FirstStepViewModel__ instances, and connect them for binding.
 
 #### Step 3: Add Views
-The View can be any WPF control, like a simple UserControl. It should be in __the same namespace__ as the Controller and the ViewModel. Let's add 3 User Controls to the project called __FirstStepView__, __SecondStepView__ and __ThirdStepView__. Each will have a caption and a __Next__ button:
+The View can be any WPF control, like a simple UserControl. It should be in __the same namespace__ as the Controller and the ViewModel. Let's add 3 User Controls to the project called __FirstStepView__, __SecondStepView__ and __ThirdStepView__. Each will have a caption and a __Next__ button. For example, FirstStepView.xaml will be:
 
+```xaml
+<UserControl x:Class="MvvmcQuickstart1.FirstStepView"
+             ...>
+    <StackPanel>
+	    <TextBlock>First step</TextBlock>
+		<Button Command="{Binding NextCommand}">Next</Button>
+    </StackPanel>
+</UserControl>
+```
 
 #### Step 4: Add ViewModels
+The ViewModels need to be called same as the Views with the __ViewModel__ postfix, and in the same namespace. So we'll add __FirstStepViewModel__, __SecondStepViewModel__ and __ThirdStepViewModel__ classes. Each ViewModel needs to inherit from __MVVMCViewModel__ base class. For example, FirstStepViewModel class will be:
+
+```csharp
+using System.Windows.Input;
+using MVVMC;
+...
+
+public class FirstStepViewModel : MVVMCViewModel
+{
+    public ICommand _nextCommand { get; set; }
+
+    public ICommand NextCommand
+    {
+        get
+        {
+            if (_nextCommand == null)
+            {
+                _nextCommand = new DelegateCommand(() =>
+                {
+                    GetController().Navigate("Next", parameter: null);
+                });
+            }
+            return _nextCommand;
+        }
+    }
+}
+```
+
+Alternatively, you can use inherit from MVVMCViewModel&lt;T&gt; to get the exact controller like this:
+```csharp
+using System.Windows.Input;
+using MVVMC;
+...
+
+public class ThirdStepViewModel : MVVMCViewModel<WizardController>
+{
+    public ICommand _nextCommand { get; set; }
+
+    public ICommand NextCommand
+    {
+        get
+        {
+            if (_nextCommand == null)
+            {
+                _nextCommand = new DelegateCommand(() =>
+                {
+                    GetExactController().Next();//Returns WizardController
+                });
+            }
+            return _nextCommand;
+        }
+    }
+}	
+```
+
+__DelegateCommand__ used here is part of the MVVMC package.
+
+#### The result:
+
+With just a little bit of styling, the resulting program is:
+	
 
 
 
