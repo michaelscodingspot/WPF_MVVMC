@@ -99,7 +99,7 @@ The View can be any WPF control, like a simple UserControl. It should be in __th
     </StackPanel>
 </UserControl>
 ```
-Using __mvvmc:NavigateCommand__ allows to navigate directly from the View. You can choose to leave it as is and the program is done! Creating a View-Model is optional. To initiate the navigation the View-Model, you'll need to change the View to this:
+Using __mvvmc:NavigateCommand__ allows to navigate directly from the View. You can choose to leave it as is and the program is done! Creating a View-Model is optional. To initiate the navigation from the View-Model, you'll need to change the View to this:
 
 ```xaml
 <UserControl x:Class="MvvmcQuickstart1.FirstStepView"
@@ -154,9 +154,20 @@ With just a little bit of styling, the resulting program looks like this:
 
 
 ## Regions:
-A Region is a Control which simply contains a content presenter with dynamic content.
-Each region area is controlled by a single controller.
-
+A Region is a Control which simply contains a content presenter with dynamic content. On navigation, the content changes to the target View. Each region area is controlled by a single controller, which is specific by the __ControllerID__ property.
+```xaml
+xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
+...
+<mvvmc:Region ControllerID="XXX" />
+```
+In applications where you want the navigation to occur on the entire screen, the Window contents should be only the Region.
+```xaml
+<Window 
+	xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
+	...>
+    <mvvmc:Region ControllerID="Wizard"></mvvmc:Region>
+</Window>
+```
 ## File naming:
 
 ## Controllers:
