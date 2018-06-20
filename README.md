@@ -160,6 +160,8 @@ xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
 ...
 <mvvmc:Region ControllerID="XXX" />
 ```
+The Controller, in turn, controls a single Region, so there's 1:1 relation between Region and Controller.
+
 In applications where you want the navigation to occur on the entire screen, the Window contents should be only the Region.
 ```xaml
 <Window 
@@ -168,7 +170,20 @@ In applications where you want the navigation to occur on the entire screen, the
     <mvvmc:Region ControllerID="Wizard"></mvvmc:Region>
 </Window>
 ```
-## File naming:
+
+The number of Regions is not limited. So in MainWindow.xaml, you might have a Region for the top bar, a Region for the Main-Content and a Region for the footer.
+
+Regions can be nested. You can have a Region which navigates to some Page, which in turn can include additional Regions.
+
+Sometimes, you'll want several different Controllers to controls the same screen area. For example, the application has several full-screen flows which include multiple screens each. In that case, you'll have one region for the "MainController" with a Page for each Flow. Each of those pages will include another Region responsible for their respected flows.
+
+> A __Page__ means a pair of a View and a ViewModel, where the ViewModel is optional. So the page "Employees" means there's a Control "EmployeesView" and optionally a class "EmployeesViewModel". A Page doesn't have to be full-screen sized. The size will be according to the Region's space on screen.
+
+## Naming convention:
+Wpf.MVVMC is convention based. The naming rules are:
+1. Each Controller is in it's own namespace.
+2. Views and ViewModels are controlled by a single Controller and should be in the same namespace as the controller.
+3. A pair of a View and a ViewModel are called a Page, and should be named XXXView and XXXViewModel, with 'XXX' being the page's name.
 
 ## Controllers:
 A controller is connected to a region and changes the region's content. A method in a controlled called "MyAction()" needs to include a function "ExecuteNavigation()". This will look for a View and ViewModel with similar name in the same namespace. "MyActionView" and "MyActionViewModel". MyActionView can be a UserControl or any FrameworkElement. MyActionViewModel should inherit from MVVMCViewModel.
