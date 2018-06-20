@@ -152,7 +152,6 @@ With just a little bit of styling, the resulting program looks like this:
 
 
 
-
 ## Regions:
 A Region is a Control which simply contains a content presenter with dynamic content. On navigation, the content changes to the target View. Each region area is controlled by a single controller, which is specific by the __ControllerID__ property.
 ```xaml
@@ -185,8 +184,59 @@ Wpf.MVVMC is convention based. The naming rules are:
 2. Views and ViewModels are controlled by a single Controller and should be in the same namespace as the controller.
 3. A pair of a View and a ViewModel are called a Page, and should be named XXXView and XXXViewModel, with 'XXX' being the page's name.
 
+It's recommended to create a separate folder for each Controller. This folder will container the Controller class with the Views and ViewModels relevant to that Controller. This way, they will have a common and unique namespace.
+
 ## Controllers:
-A controller is connected to a region and changes the region's content. A method in a controlled called "MyAction()" needs to include a function "ExecuteNavigation()". This will look for a View and ViewModel with similar name in the same namespace. "MyActionView" and "MyActionViewModel". MyActionView can be a UserControl or any FrameworkElement. MyActionViewModel should inherit from MVVMCViewModel.
+A controller contains the actual navigation logic. Each controller is connected to a single Region and the navigation executes by replacing the Region's content.
+
+Each Controller should dervive from the base class __MVVMC.Controller__.
+
+Each method in the controller can be considered an __Action__. When an Action method calls __ExecuteNavigation()__, the controller will create a View and ViewModel instance of the name of the same Action. For example:
+```csharp
+public class MטController : Controller
+{
+    public void Employees()
+    {
+        ExecuteNavigation()
+    }
+```
+In this Controller we have the action "Employees". When called, an intance of "EmployeesView" and "EmployeesViewModel" will be created and the relevant Region's content will be replaced. If "EmployeesView" is not found in the same namespace as the Controller, exception will be thrown.
+
+* Each Controller should implement the __Initial()__ Action method to determine which Page will be created when the Region is loaded.
+* You can use the Navigate() method to go to a different action.
+* Each Action method can be called with or without a parameter. The parameter is of type __object__.
+* ExecuteNavigation can be called with an object parameter, and a ViewBag dictionary. Both of these will be populated in the ViewModel as properties. The View can bind to the ViewBag directly with mvvmc:ViewBagBinding - More on those features [further on](#parameter-and-viewbag).
+
+Another example:
+
+```csharp
+public class MטController : Controller
+{
+    public void Initial()
+    {
+    	ExecuteNavigation();//Will create InitialView and InitialViewModel
+    }
+    
+    public void HireEmployee(object employee)
+    {
+        if (CanHire(employee))
+	        Navigate("HireStart", employee);
+	    else
+		    HireError();
+    }
+    
+    public void HireStart()
+    {
+    	ExecuteNavigation()
+    }
+    
+    public void HireError()
+    {
+    	ExecuteNavigation()
+    }
+```
+* The controller can call __GetCurrentPageName()__ to get the current page name in the Region.
+* The controller can call __GetCurrentViewModel()__ to get the instance of the current ViewModel.
 
 ## Views:
 
