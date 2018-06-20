@@ -91,10 +91,22 @@ The View can be any WPF control, like a simple UserControl. It should be in __th
 
 ```xaml
 <UserControl x:Class="MvvmcQuickstart1.FirstStepView"
+	     xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
              ...>
     <StackPanel>
-	    <TextBlock>First step</TextBlock>
-		<Button Command="{Binding NextCommand}">Next</Button>
+    	<TextBlock>First step</TextBlock>
+	<Button Command="{mvvmc:NavigateCommand Action=Next, ControllerID=Wizard}">Next</Button>
+    </StackPanel>
+</UserControl>
+```
+Using __mvvmc:NavigateCommand__ allows to navigate directly from the View. You can choose to leave it as is and the program is done! Creating a View-Model is optional. To initiate the navigation the View-Model, you'll need to change the View to this:
+
+```xaml
+<UserControl x:Class="MvvmcQuickstart1.FirstStepView"
+             ...>
+    <StackPanel>
+    	<TextBlock>First step</TextBlock>
+	<Button Command="{Binding NextCommand}">Next</Button>
     </StackPanel>
 </UserControl>
 ```
@@ -136,6 +148,7 @@ That's it. We have a finished 3-step wizard.
 
 With just a little bit of styling, the resulting program looks like this:
 
+![Quickstart result](/Documentation/quickstart-result.gif)
 
 
 
