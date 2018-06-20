@@ -128,39 +128,15 @@ public class FirstStepViewModel : MVVMCViewModel
 }
 ```
 
-Alternatively, you can use inherit from MVVMCViewModel&lt;T&gt; to get the exact controller like this:
-```csharp
-using System.Windows.Input;
-using MVVMC;
-...
+(__DelegateCommand__ used here is part of the MVVMC package.)
 
-public class ThirdStepViewModel : MVVMCViewModel<WizardController>
-{
-    public ICommand _nextCommand { get; set; }
-
-    public ICommand NextCommand
-    {
-        get
-        {
-            if (_nextCommand == null)
-            {
-                _nextCommand = new DelegateCommand(() =>
-                {
-                    GetExactController().Next();//Returns WizardController
-                });
-            }
-            return _nextCommand;
-        }
-    }
-}	
-```
-
-__DelegateCommand__ used here is part of the MVVMC package.
+That's it. We have a finished 3-step wizard.
 
 #### The result:
 
-With just a little bit of styling, the resulting program is:
-	
+With just a little bit of styling, the resulting program looks like this:
+
+
 
 
 
