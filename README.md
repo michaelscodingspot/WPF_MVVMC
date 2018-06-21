@@ -20,8 +20,7 @@ To read more about MVVMC and the motivation for this framework, see the original
 * [Controllers](#controllers)
 * [Views](#views)
 * [ViewModels](#viewmodels)
-* [Navigation types](#navigation-types)
-* [Parameter and ViewBag](#parameter-and-viewbag)
+* [Navigation service](#navigation-service)
 
 ## Quickstart
 
@@ -153,13 +152,15 @@ With just a little bit of styling, the resulting program looks like this:
 
 
 ## Regions:
-A Region is a Control which simply contains a content presenter with dynamic content. On navigation, the content changes to the target View. Each region area is controlled by a single controller, which is specified by the __ControllerID__ property.
+A Region is a Control which simply contains a content presenter with dynamic content. On navigation, the content changes to the target View. Each region area is controlled by a single controller, which is specified by the __ControllerID__ property. 
 ```xaml
 xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
 ...
 <mvvmc:Region ControllerID="XXX" />
 ```
-The Controller, in turn, controls a single Region, so there's 1:1 relation between Region and Controller.
+The Controller, in turn, controls a single Region, so there's 1 to 1 relation between Region and Controller.
+
+Connecting Region and Controller happens with reflection. The framework looks for a class named [ControllerId]Controller that inherits from MVVMC.Controller.
 
 In applications where you want the navigation to occur on the entire screen, the Window contents should be only the Region.
 ```xaml
@@ -189,11 +190,11 @@ It's recommended to create a separate folder for each Controller. This folder wi
 ## Controllers:
 A controller contains the actual navigation logic. Each controller is connected to a single Region and the navigation executes by replacing the Region's content.
 
-Each Controller should dervive from the base class __MVVMC.Controller__.
+Each Controller should dervive from the base class __MVVMC.Controller__, which derives from __MVVMC.IController__.
 
 Each method in the controller can be considered an __Action__. When an Action method calls __ExecuteNavigation()__, the controller will create a View and ViewModel instance of the name of the same Action. For example:
 ```csharp
-public class MטController : Controller
+public class MyController : Controller
 {
     public void Employees()
     {
@@ -206,8 +207,10 @@ In this Controller we have the action "Employees". When called, an intance of "E
 * You can use the Navigate() method to go to a different action.
 * Each Action method can be called with or without a parameter. The parameter is of type __object__.
 * ExecuteNavigation can be called with an object parameter, and a ViewBag dictionary. Both of these will be populated in the ViewModel as properties. The View can bind to the ViewBag directly with mvvmc:ViewBagBinding - More on those features [further on](#parameter-and-viewbag).
+* The controller can call __GetCurrentPageName()__ to get the current page name in the Region.
+* The controller can call __GetCurrentViewModel()__ to get the instance of the current ViewModel.
 
-Another example:
+Here's another example:
 
 ```csharp
 public class MטController : Controller
@@ -235,22 +238,85 @@ public class MטController : Controller
     	ExecuteNavigation()
     }
 ```
-* The controller can call __GetCurrentPageName()__ to get the current page name in the Region.
-* The controller can call __GetCurrentViewModel()__ to get the instance of the current ViewModel.
 
 ## Views:
+A Views can be any WPF Control, like a User Control or a Custom Control. Each view can be placed in a single region and navigated by one Controller. The View must be named [Page]View and in the same namespace as the Controller it is connected to.
+
+__When navigated to a Page__:
+1. The View's instance is created
+2. If a ViewModel class exists, the ViewModel instance is created.
+3. The View's DataContext is set to the ViewModel instance, allowing Binding between them.
+
+You can use NavigateCommand in a View's Xaml to initiate navigation, like this:
+```xaml
+xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
+...
+<Button Command="{mvvmc:NavigateCommand ControllerID='MainOperation', Action='AllEmployees'}">View Employees</Button>
+```
+Command Parameter can be included and passed to the navigation request.
+
+The View can use a special binding called __ViewBagBinding__ to bind directly to the ViewModel's ViewBag:
+```xaml
+xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
+...
+<TextBlock Text="{mvvmc:ViewBagBinding Path=EmployeeName}"/>
+```
+See more info on the ViewBag in the ViewModel section.
 
 ## ViewModels:
+A ViewModel is a regular class that must derive from __MVVMC.MVVMCViewModel__ or __MVVMC.MVVMCViewModel&lt;TController%gt;__. Creating a ViewModel for a Page is optional. The ViewModel's name must be [Page]ViewModel and in the same namespace as the Controller it is connected to.
 
-## Navigation types:
-A View, ViewModels or services can Request to navigate between screens. 
-From View a Command is available "NavigationCommand".
-From ViewModel, we can get the controller with GetController() and call the Navigate(string actionName) method.
+__When deriving from MVVMC.MVVMCViewModel:__
+You can use __GetController()__ to get an __IController__ instance. With IController you can:
+* GetCurrentViewModel()
+* Navigate(string action, object parameter)
+* NavigateToInitial()
+	
+__When deriving from MVVMC.MVVMCViewModel&lt;TController%gt;:__
+This is the recommended way to create ViewModels. You'll have to specify the controller type as TController.
+You will be able to use __TController GetExactController()__ to get an instance of the Controller the ViewModel is connected to.
 
-From anywehere, we can find controllers by:
-NavigationServiceProvider.GetNavigationServiceInstance().GetController(string controllerName)
-or 
-NavigationServiceProvider.GetNavigationServiceInstance().GetController<TController>()
+For example, the following code will navigate to the "Info" Action in AllEmployeesController and pass the "SelectedEmployee" as parameter.
+```csharp
+public class SelectEmployeeViewModel : MVVMCViewModel<AllEmployeesController>
+{
+    
+    public ICommand _selectEmployeeCommand;
+    public ICommand SelectEmployeeCommand
+    {
+        get
+        {
+            if (_selectEmployeeCommand == null)
+                _selectEmployeeCommand = new DelegateCommand(() =>
+                {
+                    GetExactController().Info(SelectedEmployee);
+                },
+                ()=>
+                {
+                    return SelectedEmployee != null;
+                });
+            return _selectEmployeeCommand;
+        }
+    }
+```
+If the ViewModel derived from MVVMC.MVVMCViewModel, we'd have to use `GetController().Navigate("Info", SelectedEmployee)`.
 
-## Parameter and ViewBag
+The MVVMCViewModel has the __NavigationParameter__ and __ViewBag__ properties, which are populated by the Controller during naviagtion.
+* The NavigationParameter is of type object and can be anything.
+* The ViewBag is of type Dictionary<string, object>, and can be binded to directly from the View.
+
+After navigation, the Controller will call the virtual Initialize() method, which you can override. That is the place to make use of the NavigationParamater to populate the ViewModel properties for example.
+
+## Navigation service:
+The Navigation-Service is exposed by the __INavigationService__ interface and can be used everywhere with the static `NavigationServiceProvider.GetNavigationServiceInstance()`. It's a singleton for now, and might be changed to some kind of injection pattern in the future.
+
+INavigationService allows:
+* Controller GetController(string controllerID)
+* TController GetController<TControllerType>()
+* MVVMCViewModel GetCurrentViewModelByControllerID(string controllerID);
+* string GetCurrentPageNameByControllerID(string controllerID);
+* NavigateWithController<TViewModel>(object parameter) - The Page is according to the given TViewModel.
+
+Which basically means we can navigate to everything from anywhere.
+
 
