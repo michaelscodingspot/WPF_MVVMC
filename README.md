@@ -8,7 +8,7 @@ Nuget: `Install-Package Wpf.MVVMC`
 ## Description
 This project is a navigation framework for WPF, which implements the MVVMC pattern. MVVMC adds Controllers to MVVM, which are responsible for navigation and switching between views (screens or parts of screen).
 
-In MVVMC, the View and ViewModel will request a navigation action from the controller. The controller will create the new View and ViewModel. This way, we achieve a separation of concerns, and the View & ViewModel are responsible only to themselves, and don't create other Views.
+In MVVMC, the View and ViewModel will request a navigation action from the controller. The controller will create the new View and ViewModel instances. This way, we achieve a separation of concerns, and the View & ViewModel are responsible only to themselves, and don't create or know about other Views.
 
 To read more about MVVMC and the motivation for this framework, see the original blog posts: [Part 1](http://michaelscodingspot.com/2017/02/06/wpf-page-navigation-like-mvc-building-mvvm-framework-controllers/), [Part 2](http://michaelscodingspot.com/2017/02/06/wpf-page-navigation-like-mvc-building-mvvm-framework-controllers/).
 
@@ -27,7 +27,7 @@ To read more about MVVMC and the motivation for this framework, see the original
 Let's build a small Wizard application with 3 steps in it. First, create a WPF application and add the __Wpf.MVVMC__ Nuget package.
 
 #### Step 1: Create a Region
-Now, we'll need to add a [Region](#regions) to the MainWindow, like this:
+Add a [Region](#regions) to the MainWindow, like this:
 ```xaml
 <Window 
 	xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
@@ -175,9 +175,9 @@ The number of Regions is not limited. So in MainWindow.xaml, you might have a Re
 
 Regions can be nested. You can have a Region which navigates to some Page, which in turn can include additional Regions.
 
-Sometimes, you'll want several different Controllers to controls the same screen area. For example, the application has several full-screen flows which include multiple screens each. In that case, you'll have one region for the "MainController" with a Page for each Flow. Each of those pages will include another Region responsible for their respected flows.
+Sometimes, you'll want several different Controllers to control the same screen area. For example, the application has several full-screen flows which include multiple screens each. In that case, you'll have one region for the "MainController" with a Page for each Flow. Each of those pages will include another Region responsible for their respected flows.
 
-> A __Page__ means a pair of a View and a ViewModel, where the ViewModel is optional. So the page "Employees" means there's a Control "EmployeesView" and optionally a class "EmployeesViewModel". A Page doesn't have to be full-screen sized. The size will be according to the Region's space on screen.
+> A __Page__ means a pair of a View and a ViewModel, where the ViewModel is optional. So the page "Employees" means there's a WPF UI element "EmployeesView" and optionally a class "EmployeesViewModel". A Page doesn't have to be full-screen sized. The size will be according to the Region's space on screen.
 
 ## Naming convention:
 Wpf.MVVMC is convention based. The naming rules are:
@@ -190,7 +190,7 @@ It's recommended to create a separate folder for each Controller. This folder wi
 ## Controllers:
 A controller contains the actual navigation logic. Each controller is connected to a single Region and the navigation executes by replacing the Region's content.
 
-Each Controller should dervive from the base class __MVVMC.Controller__, which derives from __MVVMC.IController__.
+Each Controller should dervive from the base class __MVVMC.Controller__.
 
 Each method in the controller can be considered an __Action__. When an Action method calls __ExecuteNavigation()__, the controller will create a View and ViewModel instance of the name of the same Action. For example:
 ```csharp
@@ -206,7 +206,7 @@ In this Controller we have the action "Employees". When called, an intance of "E
 * Each Controller should implement the __Initial()__ Action method to determine which Page will be created when the Region is loaded.
 * You can use the Navigate() method to go to a different action.
 * Each Action method can be called with or without a parameter. The parameter is of type __object__.
-* ExecuteNavigation can be called with an object parameter, and a ViewBag dictionary. Both of these will be populated in the ViewModel as properties. The View can bind to the ViewBag directly with mvvmc:ViewBagBinding - More on those features [further on](#parameter-and-viewbag).
+* ExecuteNavigation can be called with an object parameter, and a ViewBag dictionary. Both of these will be populated in the ViewModel as properties. The View can bind to the ViewBag directly with mvvmc:ViewBagBinding - More on those features further on.
 * The controller can call __GetCurrentPageName()__ to get the current page name in the Region.
 * The controller can call __GetCurrentViewModel()__ to get the instance of the current ViewModel.
 
@@ -223,9 +223,9 @@ public class MטController : Controller
     public void HireEmployee(object employee)
     {
         if (CanHire(employee))
-	        Navigate("HireStart", employee);
-	    else
-		    HireError();
+		Navigate("HireStart", employee);
+    	else
+		HireError();
     }
     
     public void HireStart()
@@ -242,7 +242,7 @@ public class MטController : Controller
 ## Views:
 A Views can be any WPF Control, like a User Control or a Custom Control. Each view can be placed in a single region and navigated by one Controller. The View must be named [Page]View and in the same namespace as the Controller it is connected to.
 
-__When navigated to a Page__:
+__When navigating to a Page__:
 1. The View's instance is created
 2. If a ViewModel class exists, the ViewModel instance is created.
 3. The View's DataContext is set to the ViewModel instance, allowing Binding between them.
@@ -272,7 +272,7 @@ You can use __GetController()__ to get an __IController__ instance. With IContro
 * Navigate(string action, object parameter)
 * NavigateToInitial()
 	
-__When deriving from MVVMC.MVVMCViewModel&lt;TController%gt;:__
+__When deriving from MVVMC.MVVMCViewModel&lt;TController%gt;__
 This is the recommended way to create ViewModels. You'll have to specify the controller type as TController.
 You will be able to use __TController GetExactController()__ to get an instance of the Controller the ViewModel is connected to.
 
