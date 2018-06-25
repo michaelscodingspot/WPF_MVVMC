@@ -48,14 +48,16 @@ namespace MVVMC
             Assembly assembly = Assembly.GetCallingAssembly();
             var assemblyTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(GetLoadableTypes);
             _controllerTypes = assemblyTypes.Where(t => t.BaseType?.FullName == "MVVMC.Controller").ToList();
-            
 
-            _viewModelTypes = assemblyTypes.Where(t => t.BaseType != null && t.BaseType?.FullName != null && t.BaseType.FullName.StartsWith("MVVMC.MVVMCViewModel")).ToList();
+
+            _viewModelTypes = assemblyTypes
+                .Where(t => t.BaseType != null && t.BaseType?.FullName != null && t.BaseType.FullName.StartsWith("MVVMC.MVVMCViewModel"))
+                .ToList();
             var controllerNamespaces = _controllerTypes.Select(vm => vm.Namespace);
             _viewTypes = assemblyTypes.Where(t =>
                 controllerNamespaces.Contains(t.Namespace) &&
                 t.Name.EndsWith("View", StringComparison.InvariantCultureIgnoreCase)).ToList();
-            
+
             _dispatcher = Dispatcher.CurrentDispatcher;
         }
 

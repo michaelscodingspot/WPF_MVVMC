@@ -26,6 +26,8 @@ namespace MVVMC
         private MVVMCNavigationService _navigationService;
         public Region()
         {
+            if (DesignerProperties.GetIsInDesignMode(this))
+                return;
             _navigationService = MVVMCNavigationService.GetInstance();
             this.Loaded += OnRegionLoaded;
             this.Unloaded += OnRegionUnloaded;
@@ -39,9 +41,6 @@ namespace MVVMC
 
         private void OnRegionLoaded(object sender, RoutedEventArgs e)
         {
-            if (DesignerProperties.GetIsInDesignMode(this))
-                return;
-
             if (string.IsNullOrEmpty(ControllerID))
             {
                 throw new NullReferenceException($"A loaded Region doesn't have 'ControllerID' set to anything");
