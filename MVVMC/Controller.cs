@@ -37,7 +37,7 @@ namespace MVVMC
             var method = _methods.FirstOrDefault(m => m.Name == action);
             if (method == null)
             {
-                throw new Exception($"Navigate failed. Can't find method {method.Name} in controller {ID}");
+                throw new Exception($"Navigate failed. Can't find method '{action}' in controller '{ID}'");
             }
             else
             {
