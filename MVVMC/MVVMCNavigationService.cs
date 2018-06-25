@@ -51,9 +51,9 @@ namespace MVVMC
             
 
             _viewModelTypes = assemblyTypes.Where(t => t.BaseType != null && t.BaseType?.FullName != null && t.BaseType.FullName.StartsWith("MVVMC.MVVMCViewModel")).ToList();
-            var viewModelNamespaces = _viewModelTypes.Select(vm => vm.Namespace);
+            var controllerNamespaces = _controllerTypes.Select(vm => vm.Namespace);
             _viewTypes = assemblyTypes.Where(t =>
-                viewModelNamespaces.Contains(t.Namespace) &&
+                controllerNamespaces.Contains(t.Namespace) &&
                 t.Name.EndsWith("View", StringComparison.InvariantCultureIgnoreCase)).ToList();
             
             _dispatcher = Dispatcher.CurrentDispatcher;
