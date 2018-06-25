@@ -41,7 +41,12 @@ namespace MVVMC
         {
             if (DesignerProperties.GetIsInDesignMode(this))
                 return;
-             
+
+            if (string.IsNullOrEmpty(ControllerID))
+            {
+                throw new NullReferenceException($"A loaded Region doesn't have 'ControllerID' set to anything");
+            }
+
             _navigationService.CreateAndAddController(ControllerID);
             _navigationService.AddRegion(this);
             _navigationService.GetController(ControllerID).NavigateToInitial();
