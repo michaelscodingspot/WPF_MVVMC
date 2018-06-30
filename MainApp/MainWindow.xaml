@@ -21,6 +21,11 @@
 		<materialDesign:Card Margin="5">
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
 				<Button Margin="5" Command="{mvvmc:NavigateCommand ControllerID='MainOperation'}">Home</Button>
+				<Button Margin="5" Command="{mvvmc:GoBackCommand ControllerID='MainOperation',
+					HistoricalNavigationMode=UseCommandParameter}">Back</Button>
+				<Button Margin="5" Command="{mvvmc:GoForwardCommand ControllerID='MainOperation',
+					HistoricalNavigationMode=UseCommandParameter}">Forward</Button>
+				<!--<Button Margin="5" Command="{mvvmc:NavigateCommand ControllerID='MainOperation'}">Forward</Button>-->
 				<Button Margin="5" Command="{mvvmc:NavigateCommand ControllerID='MainOperation', Action='About'}">About</Button>
 			</StackPanel>
 		</materialDesign:Card>

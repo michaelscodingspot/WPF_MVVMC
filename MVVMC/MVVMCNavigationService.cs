@@ -38,6 +38,9 @@ namespace MVVMC
         List<Controller> _controllers = new List<Controller>();
         private Dispatcher _dispatcher;
 
+        internal event Action<string> ControllerCreated;
+
+
         private MVVMCNavigationService()
         {
             Initialize();
@@ -103,6 +106,7 @@ namespace MVVMC
             controller.NavigationService = this;
             controller.NavigationExecutor = this;
             _controllers.Add(controller);
+            ControllerCreated?.Invoke(controllerID);
         }
 
         private Type GetControllerTypeById(string controllerID)
@@ -156,6 +160,11 @@ namespace MVVMC
         public Controller GetController(string controllerID)
         {
             return _controllers.First(elem => elem.ID.Equals(controllerID, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public bool IsControllerExists(string controllerID)
+        {
+            return _controllers.Any(elem => elem.ID.Equals(controllerID, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public TControllerType GetController<TControllerType>() where TControllerType : Controller

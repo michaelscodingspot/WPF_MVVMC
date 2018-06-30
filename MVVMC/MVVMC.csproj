@@ -49,8 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseViewModel.cs" />
+    <Compile Include="GoForwardCommand.cs" />
+    <Compile Include="HistoricalNavigationMode.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="INavigationExecutor.cs" />
+    <Compile Include="GoBackCommand.cs" />
     <Compile Include="NavigationServiceProvider.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="NavigateCommand.cs" />
