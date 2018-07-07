@@ -19,5 +19,9 @@ namespace MVVMC
 
         string GetCurrentPageNameByControllerID(string controllerID);
 
+        void CanGoBackChanged(string controllerId);
+
+        void CanGoForwardChanged(string controllerId);
+
     }
 }

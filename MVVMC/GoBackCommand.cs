@@ -18,41 +18,20 @@ namespace MVVMC
         public string ControllerID { get; set; }
         public Dictionary<string, object> ViewBag { get; set; }
 
-        public bool _canExecute = false;
-
-        //private Controller _controller;
+        private bool _canExecute = false;
 
         public GoBackCommand()
         {
-            if (_navigationService.Value.IsControllerExists(ControllerID))
+            _navigationService.Value.AddGoBackCommand(this);
+        }
+
+        public void ChangeCanExecute()
+        {
+            var newValue = _navigationService.Value.GetController(ControllerID).CanGoBack;
+            if (newValue != _canExecute)
             {
-                //Do nothing
-                var controller = _navigationService.Value.GetController(ControllerID);
-                _canExecute = controller.CanGoBack;
-                controller.CanGoBackChanged += () => CanExecuteChanged?.Invoke(this, null);
-            }
-            else
-            {
-                Action<string> handler = null;
-                handler = (controllerID) =>
-                {
-
-                    if (ControllerID.Equals(controllerID, StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        var controller = _navigationService.Value.GetController(ControllerID);
-                        _canExecute = controller.CanGoBack;
-                        CanExecuteChanged?.Invoke(this, null);
-                        _navigationService.Value.ControllerCreated -= handler;
-                        controller.CanGoBackChanged += () =>
-                        {
-                            _canExecute = controller.CanGoBack;
-                            CanExecuteChanged?.Invoke(this, null);
-                        };
-
-                    }
-                };
-                _navigationService.Value.ControllerCreated += handler;
-
+                _canExecute = newValue;
+                CanExecuteChanged?.Invoke(this, null);
             }
         }
 

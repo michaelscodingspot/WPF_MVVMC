@@ -40,6 +40,9 @@ namespace MVVMC
 
         internal event Action<string> ControllerCreated;
 
+        private List<WeakReference<GoBackCommand>> _goBackCommands = new List<WeakReference<GoBackCommand>>();
+        private List<WeakReference<GoForwardCommand>> _goForwardCommands = new List<WeakReference<GoForwardCommand>>();
+
 
         private MVVMCNavigationService()
         {
@@ -259,6 +262,72 @@ namespace MVVMC
             }
         }
 
+        public void AddGoBackCommand(GoBackCommand goBackCommand)
+        {
+            _goBackCommands.Add(new WeakReference<GoBackCommand>(goBackCommand));
+        }
 
+        public void AddGoForwardCommand(GoForwardCommand goForwardCommand)
+        {
+            _goForwardCommands.Add(new WeakReference<GoForwardCommand>(goForwardCommand));
+        }
+
+        public void CanGoBackChanged(string controllerId)
+        {
+            var goBackCommands = GetGoBackCommands(controllerId);
+            foreach (var goBackCommand in goBackCommands)
+            {
+                goBackCommand.ChangeCanExecute();
+            }
+        }
+
+        public void CanGoForwardChanged(string controllerId)
+        {
+            var goForwardCommands = GetGoForwardCommands(controllerId);
+            foreach (var goForwardCommand in goForwardCommands)
+            {
+                goForwardCommand.ChangeCanExecute();
+            }
+        }
+
+        public IEnumerable<GoBackCommand> GetGoBackCommands(string controllerId)
+        {
+            RefreshGoBackCommands();
+            return _goBackCommands.Select(wr =>
+            {
+                wr.TryGetTarget(out GoBackCommand goBackCommand);
+                return goBackCommand;
+            }).Where(cmd => cmd != null && cmd.ControllerID.Equals(controllerId, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public IEnumerable<GoForwardCommand> GetGoForwardCommands(string controllerId)
+        {
+            RefreshGoForwardCommands();
+            return _goForwardCommands.Select(wr =>
+            {
+                wr.TryGetTarget(out GoForwardCommand goForwardCommand);
+                return goForwardCommand;
+            }).Where(cmd => cmd != null && cmd.ControllerID.Equals(controllerId, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        private void RefreshGoBackCommands()
+        {
+            List<WeakReference<GoBackCommand>> toRemove =
+                _goBackCommands.Where(wr => !wr.TryGetTarget(out GoBackCommand goBackCommand)).ToList();
+            foreach (var wr in toRemove)
+            {
+                _goBackCommands.Remove(wr);
+            }
+        }
+
+        private void RefreshGoForwardCommands()
+        {
+            List<WeakReference<GoForwardCommand>> toRemove =
+                _goForwardCommands.Where(wr => !wr.TryGetTarget(out GoForwardCommand goForwardCommand)).ToList();
+            foreach (var wr in toRemove)
+            {
+                _goForwardCommands.Remove(wr);
+            }
+        }
     }
 }

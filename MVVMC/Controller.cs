@@ -47,9 +47,6 @@ namespace MVVMC
         protected List<HistoryItem> History { get; private set; } = new List<HistoryItem>();
         protected int HistoryCurrentItemIndex { get; set; } = -1;
 
-        internal event Action CanGoBackChanged;
-        internal event Action CanGoForwardChanged;
-
         public Controller()
         {
             _thisType = this.GetType();
@@ -164,8 +161,8 @@ namespace MVVMC
         {
             ModifyHistory(pageName, parameter, navigationMode, viewBag);
             NavigationExecutor.ExecuteNavigation(ID, pageName, parameter, viewBag);
-            CanGoBackChanged?.Invoke();
-            CanGoForwardChanged?.Invoke();
+            NavigationService.CanGoBackChanged(ID);
+            NavigationService.CanGoForwardChanged(ID);
         }
 
         private void ModifyHistory(string pageName, object parameter, NavigationMode navigationMode, Dictionary<string, object> viewBag)
