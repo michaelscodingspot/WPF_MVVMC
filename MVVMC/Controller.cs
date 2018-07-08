@@ -146,6 +146,12 @@ namespace MVVMC
             get { return HistoryCurrentItemIndex < History.Count - 1; }
         }
 
+        protected void ClearHistory()
+        {
+            History.Clear();
+            HistoryCurrentItemIndex = -1;
+        }
+
 
         protected void ExecuteNavigation([CallerMemberName]string pageName = null)
         {
@@ -203,7 +209,7 @@ namespace MVVMC
             return NavigationService.GetCurrentViewModelByControllerID(ID);
         }
 
-        protected string GetCurrentPageName()
+        public string GetCurrentPageName()
         {
             return NavigationService.GetCurrentPageNameByControllerID(ID);
         }

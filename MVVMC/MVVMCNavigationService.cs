@@ -39,6 +39,9 @@ namespace MVVMC
         private Dispatcher _dispatcher;
 
         internal event Action<string> ControllerCreated;
+        public event Action<string> CanGoBackChangedEvent;
+        public event Action<string> CanGoForwardChangedEvent;
+
 
         private List<WeakReference<GoBackCommand>> _goBackCommands = new List<WeakReference<GoBackCommand>>();
         private List<WeakReference<GoForwardCommand>> _goForwardCommands = new List<WeakReference<GoForwardCommand>>();
@@ -279,6 +282,7 @@ namespace MVVMC
             {
                 goBackCommand.ChangeCanExecute();
             }
+            CanGoBackChangedEvent?.Invoke(controllerId);
         }
 
         public void CanGoForwardChanged(string controllerId)
@@ -288,6 +292,7 @@ namespace MVVMC
             {
                 goForwardCommand.ChangeCanExecute();
             }
+            CanGoForwardChangedEvent?.Invoke(controllerId);
         }
 
         public IEnumerable<GoBackCommand> GetGoBackCommands(string controllerId)
