@@ -118,7 +118,7 @@ namespace MVVMC
             VerifyHistoryModeAtTheTimeWasSaveParameter(historyItem.HistoryModeAtTheTime);
             ExecuteNavigationInternal(historyItem.PageName,
                 historyItem.NavigationParameter,
-                NavigationMode.HistoryBack,
+                NavigationMode.HistoryForward,
                 historyItem.ViewBag == null ? null : new Dictionary<string, object>(historyItem.ViewBag));
         }
 
