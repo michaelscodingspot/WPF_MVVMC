@@ -109,7 +109,7 @@ namespace MVVMC
             var instance = Activator.CreateInstance(type);
             var controller = instance as Controller;
             controller.ID = controllerID;
-            controller.NavigationService = this;
+            controller.SetNavigationService(this);
             controller.NavigationExecutor = this;
             _controllers.Add(controller);
             ControllerCreated?.Invoke(controllerID);
@@ -171,6 +171,15 @@ namespace MVVMC
         public bool IsControllerExists(string controllerID)
         {
             return _controllers.Any(elem => elem.ID.Equals(controllerID, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public bool IsControllerExists<TControllerType>() where TControllerType : Controller
+        {
+            string controllerIdWithPostfix = typeof(TControllerType).Name;
+            if (controllerIdWithPostfix.EndsWith("Controller"))
+                return IsControllerExists(
+                    controllerIdWithPostfix.Substring(0, controllerIdWithPostfix.Length - ("Controller".Length)));
+            throw new InvalidOperationException("Controller classes must end with 'Controller' postfix");
         }
 
         public TControllerType GetController<TControllerType>() where TControllerType : Controller
@@ -275,7 +284,7 @@ namespace MVVMC
             _goForwardCommands.Add(new WeakReference<GoForwardCommand>(goForwardCommand));
         }
 
-        public void CanGoBackChanged(string controllerId)
+        public void ChangeCanGoBack(string controllerId)
         {
             var goBackCommands = GetGoBackCommands(controllerId);
             foreach (var goBackCommand in goBackCommands)
@@ -285,7 +294,7 @@ namespace MVVMC
             CanGoBackChangedEvent?.Invoke(controllerId);
         }
 
-        public void CanGoForwardChanged(string controllerId)
+        public void ChangeCanGoForward(string controllerId)
         {
             var goForwardCommands = GetGoForwardCommands(controllerId);
             foreach (var goForwardCommand in goForwardCommands)

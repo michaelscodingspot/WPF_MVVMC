@@ -38,7 +38,12 @@ namespace MVVMC
         private Type _thisType;
         private MethodInfo[] _methods;
 
-        public INavigationService NavigationService { get; set; }
+        private MVVMCNavigationService _navigationService { get; set; }
+        public INavigationService NavigationService
+        {
+            get { return _navigationService; }
+        }
+
         public INavigationExecutor NavigationExecutor { get; set; }
 
         public string ID { get; internal set; }
@@ -51,6 +56,11 @@ namespace MVVMC
         {
             _thisType = this.GetType();
             _methods = _thisType.GetMethods();
+        }
+
+        internal void SetNavigationService(MVVMCNavigationService navigationService)
+        {
+            _navigationService = navigationService;
         }
 
         public void NavigateToInitial()
@@ -167,8 +177,8 @@ namespace MVVMC
         {
             ModifyHistory(pageName, parameter, navigationMode, viewBag);
             NavigationExecutor.ExecuteNavigation(ID, pageName, parameter, viewBag);
-            NavigationService.CanGoBackChanged(ID);
-            NavigationService.CanGoForwardChanged(ID);
+            _navigationService.ChangeCanGoBack(ID);
+            _navigationService.ChangeCanGoForward(ID);
         }
 
         private void ModifyHistory(string pageName, object parameter, NavigationMode navigationMode, Dictionary<string, object> viewBag)
@@ -206,12 +216,12 @@ namespace MVVMC
 
         public MVVMCViewModel GetCurrentViewModel()
         {
-            return NavigationService.GetCurrentViewModelByControllerID(ID);
+            return _navigationService.GetCurrentViewModelByControllerID(ID);
         }
 
         public string GetCurrentPageName()
         {
-            return NavigationService.GetCurrentPageNameByControllerID(ID);
+            return _navigationService.GetCurrentPageNameByControllerID(ID);
         }
 
         public abstract void Initial();
