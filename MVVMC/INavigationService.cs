@@ -15,6 +15,9 @@ namespace MVVMC
         TControllerType GetController<TControllerType>() where TControllerType : Controller;
         bool IsControllerExists(string controllerID);
         bool IsControllerExists<TControllerType>() where TControllerType : Controller;
+        string GetControllerId<TControllerType>() where TControllerType : Controller;
+        event NavigationOccuredEventArgs NavigationOccured;
+
 
         MVVMCViewModel GetCurrentViewModelByControllerID(string controllerID);
 

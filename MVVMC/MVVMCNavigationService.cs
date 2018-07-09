@@ -10,6 +10,8 @@ using System.Windows.Threading;
 
 namespace MVVMC
 {
+    public delegate void NavigationOccuredEventArgs(string controllerId, string previousPage, string newPage);
+
     internal class MVVMCNavigationService : INavigationService, INavigationExecutor
     {
         #region SINGLETON
@@ -41,6 +43,8 @@ namespace MVVMC
         internal event Action<string> ControllerCreated;
         public event Action<string> CanGoBackChangedEvent;
         public event Action<string> CanGoForwardChangedEvent;
+
+        public event NavigationOccuredEventArgs NavigationOccured;
 
 
         private List<WeakReference<GoBackCommand>> _goBackCommands = new List<WeakReference<GoBackCommand>>();
@@ -175,10 +179,14 @@ namespace MVVMC
 
         public bool IsControllerExists<TControllerType>() where TControllerType : Controller
         {
+            return IsControllerExists(GetControllerId<TControllerType>());
+        }
+
+        public string GetControllerId<TControllerType>() where TControllerType : Controller
+        {
             string controllerIdWithPostfix = typeof(TControllerType).Name;
             if (controllerIdWithPostfix.EndsWith("Controller"))
-                return IsControllerExists(
-                    controllerIdWithPostfix.Substring(0, controllerIdWithPostfix.Length - ("Controller".Length)));
+                return controllerIdWithPostfix.Substring(0, controllerIdWithPostfix.Length - ("Controller".Length));
             throw new InvalidOperationException("Controller classes must end with 'Controller' postfix");
         }
 
@@ -240,6 +248,7 @@ namespace MVVMC
 
         public void ExecuteNavigation(string controllerID, string pageName, object parameter, Dictionary<string, object> viewBag = null)
         {
+            var prevPage = GetController(controllerID).GetCurrentPageName();
             RunOnUIThread(() =>
             {
                 var target = CreateViewAndViewModel(controllerID, pageName);
@@ -255,6 +264,7 @@ namespace MVVMC
 
                 ChangeContentInRegion(target, controllerID);
             });
+            NavigationOccured?.Invoke(controllerID, prevPage, pageName);
         }
 
         private void ChangeContentInRegion(object content, string controllerID)
