@@ -177,8 +177,11 @@ namespace MVVMC
         {
             ModifyHistory(pageName, parameter, navigationMode, viewBag);
             NavigationExecutor.ExecuteNavigation(ID, pageName, parameter, viewBag);
-            _navigationService.ChangeCanGoBack(ID);
-            _navigationService.ChangeCanGoForward(ID);
+            _navigationService.RunOnUIThread(() =>
+            {
+                _navigationService.ChangeCanGoBack(ID);
+                _navigationService.ChangeCanGoForward(ID);
+            });
         }
 
         private void ModifyHistory(string pageName, object parameter, NavigationMode navigationMode, Dictionary<string, object> viewBag)

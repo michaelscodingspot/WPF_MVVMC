@@ -248,9 +248,9 @@ namespace MVVMC
 
         public void ExecuteNavigation(string controllerID, string pageName, object parameter, Dictionary<string, object> viewBag = null)
         {
-            var prevPage = GetController(controllerID).GetCurrentPageName();
             RunOnUIThread(() =>
             {
+                var prevPage = GetController(controllerID).GetCurrentPageName();
                 var target = CreateViewAndViewModel(controllerID, pageName);
 
                 var vm = target.DataContext;
@@ -263,8 +263,8 @@ namespace MVVMC
                 }
 
                 ChangeContentInRegion(target, controllerID);
+                NavigationOccured?.Invoke(controllerID, prevPage, pageName);
             });
-            NavigationOccured?.Invoke(controllerID, prevPage, pageName);
         }
 
         private void ChangeContentInRegion(object content, string controllerID)
@@ -274,7 +274,7 @@ namespace MVVMC
             navArea.Content = content;
         }
 
-        private void RunOnUIThread(Action act)
+        public void RunOnUIThread(Action act)
         {
             if (Thread.CurrentThread == _dispatcher.Thread)
                 act();
