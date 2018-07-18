@@ -333,15 +333,22 @@ public virtual void GoBack(object parameter, Dictionary<string, object> viewBag)
 ```
 
 In __SaveParameterInstance__ mode, the instances of __parameter__ and __viewBag__ are saved. You have the choice to pass a new parameter or use the previous one with the `public virtual void GoBack()` method.
-Note that in__SaveParameterInstance__ mode, instances are saved, which might lead to memory leaks.
+Note that in __SaveParameterInstance__ mode, instances are saved, which might lead to memory leaks.
 
 Additional methods and properties available are:
 * `ClearHistory()` method
-* __CanGoBack__ and __CanGoForward__ which can be overridden to custom logic.
-* __History__ property, which is a List with navigation history.
+* `CanGoBack` and `CanGoForward` which can be overridden to custom logic.
+* `History` property, which is a List with navigation history.
 * In __NavigationService__ added events: `CanGoBackChangedEvent` and `CanGoForwardChangedEvent`
 
+In XAML, you can use `mvvmc:GoBackCommand` and `mvvmc:GoForwardCommand` like this:
 
-
+```xaml
+<Button Margin="5" Command="{mvvmc:GoBackCommand ControllerID='MainOperation',
+	HistoricalNavigationMode=UseCommandParameter}">Back</Button>
+<Button Margin="5" Command="{mvvmc:GoForwardCommand ControllerID='MainOperation',
+	HistoricalNavigationMode=UseCommandParameter}">Forward</Button>
+```
+__HistoricalNavigationMode__ can be either __UseCommandParameter__ or __UseSavedParameter__. When using __UseSavedParameter__, the Controller's HistoryMode should be set to __SaveParameterInstance__ or an exception will be thrown.
 
 
