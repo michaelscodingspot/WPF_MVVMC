@@ -324,7 +324,7 @@ Which basically means we can navigate to everything from anywhere.
 Historical navigation is available for each controller. So you can tell a controller to "Go Back" to the previous page or "Go Forward" again, after going back.
 
 
-Each controller now exposes __GoBack__ and __GoForward__ methods. These methods will execute navigation immediately, without invoking the Controller's Action. For example, in a wizard application we might have a __Next__ method and a __FirstStep__, __SecondStep__ and so on. Each navigation invokes the __Next__ action which in turn invokes the relevant navigation method. If we are in the 3rd step, on invoking __GoBack__, will  create__ SecondStepView__ and __SecondStepViewModel__ without invoking any method in the Controller.
+Each controller now exposes __GoBack__ and __GoForward__ methods. These methods will execute navigation immediately, without invoking the Controller's Action. For example, in a wizard application we might have a __Next__ method and a __FirstStep__, __SecondStep__ and so on. Each navigation invokes the __Next__ action which in turn invokes the relevant navigation method. If we are in the 3rd step, on invoking __GoBack__, will  create __SecondStepView__ and __SecondStepViewModel__ without invoking any method in the Controller.
 
 Each controller has a protected property __HistoryMode__ which is an enum with 2 modes: __DiscardParameterInstance__ (default) and __SaveParameterInstance__. This can be set in your Controllers, and even changed per navigation. On a regular navigation, we pass a Parameter and a ViewBag each time (which are saved in the created ViewModel). When in __DiscardParameterInstance__ mode, the "GoBack" method will expect a parameter and a ViewBag as parameters, since these were discarded after the navigation.
 
@@ -335,7 +335,11 @@ public virtual void GoBack(object parameter, Dictionary<string, object> viewBag)
 In __SaveParameterInstance__ mode, the instances of __parameter__ and __viewBag__ are saved. You have the choice to pass a new parameter or use the previous one with the `public virtual void GoBack()` method.
 Note that in__SaveParameterInstance__ mode, instances are saved, which might lead to memory leaks.
 
-
+Additional methods and properties available are:
+* `ClearHistory()` method
+* __CanGoBack__ and __CanGoForward__ which can be overridden to custom logic.
+* __History__ property, which is a List with navigation history.
+* In __NavigationService__ added events: `CanGoBackChangedEvent` and `CanGoForwardChangedEvent`
 
 
 
