@@ -21,7 +21,7 @@ To read more about MVVMC and the motivation for this framework, see the original
 * [Views](#views)
 * [ViewModels](#viewmodels)
 * [Navigation service](#navigation-service)
-* [Go Back and Forward] (#go-back-and-forward)
+* [Go Back and Forward](#go-back-and-forward)
 
 ## Quickstart
 
