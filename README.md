@@ -344,10 +344,13 @@ Additional methods and properties available are:
 In XAML, you can use `mvvmc:GoBackCommand` and `mvvmc:GoForwardCommand` like this:
 
 ```xaml
+xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
+...
 <Button Margin="5" Command="{mvvmc:GoBackCommand ControllerID='MainOperation',
 	HistoricalNavigationMode=UseCommandParameter}">Back</Button>
 <Button Margin="5" Command="{mvvmc:GoForwardCommand ControllerID='MainOperation',
-	HistoricalNavigationMode=UseCommandParameter}">Forward</Button>
+	HistoricalNavigationMode=UseCommandParameter}" 
+	CommandParameter="{Binding MyNavigationParameter}">Forward</Button>
 ```
 __HistoricalNavigationMode__ can be either __UseCommandParameter__ or __UseSavedParameter__. When using __UseSavedParameter__, the Controller's HistoryMode should be set to __SaveParameterInstance__ or an exception will be thrown.
 
