@@ -324,7 +324,7 @@ Which basically means we can navigate to everything from anywhere.
 Historical navigation is available for each controller. So you can tell a controller to "Go Back" to the previous page or "Go Forward" again, after going back.
 
 
-Each controller now exposes __GoBack__ and __GoForward__ methods. These methods will execute navigation immediately, without invoking the Controller's Action. For example, in a wizard application we might have a __Next__ method and a __FirstStep__, __SecondStep__ and so on. Each navigation invokes the __Next__ action which in turn invokes the relevant navigation method. If we are in the 3rd step, on invoking __GoBack__, will  create __SecondStepView__ and __SecondStepViewModel__ without invoking any method in the Controller.
+Each controller now exposes __GoBack__ and __GoForward__ methods. These methods will execute navigation immediately, without invoking the Controller's Action. For example, in a wizard application we might have a __FirstStep__, __SecondStep__ and so on. If we are in the 3rd step, invoking __GoBack__ will  create and navigate to __SecondStepView__ and __SecondStepViewModel__ without actually invoking the `SecondStep()` method in the Controller.
 
 Each controller has a protected property __HistoryMode__ which is an enum with 2 modes: __DiscardParameterInstance__ (default) and __SaveParameterInstance__. This can be set in your Controllers, and even changed per navigation. On a regular navigation, we pass a Parameter and a ViewBag each time (which are saved in the created ViewModel). When in __DiscardParameterInstance__ mode, the "GoBack" method will expect a parameter and a ViewBag as parameters, since these were discarded after the navigation.
 
@@ -337,9 +337,9 @@ Note that in __SaveParameterInstance__ mode, instances are saved, which might le
 
 Additional methods and properties available are:
 * `ClearHistory()` method
-* `CanGoBack` and `CanGoForward` which can be overridden to custom logic.
+* `CanGoBack` and `CanGoForward` which can be overridden to custom logic (affects GoBackCommand and GoForwardCommand available in XAML).
 * `History` property, which is a List with navigation history.
-* In __NavigationService__ added events: `CanGoBackChangedEvent` and `CanGoForwardChangedEvent`
+* __NavigationService__ exposes events: `CanGoBackChangedEvent` and `CanGoForwardChangedEvent`
 
 In XAML, you can use `mvvmc:GoBackCommand` and `mvvmc:GoForwardCommand` like this:
 
@@ -353,5 +353,6 @@ xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
 	CommandParameter="{Binding MyNavigationParameter}">Forward</Button>
 ```
 __HistoricalNavigationMode__ can be either __UseCommandParameter__ or __UseSavedParameter__. When using __UseSavedParameter__, the Controller's HistoryMode should be set to __SaveParameterInstance__ or an exception will be thrown.
+The command is enabled or disabled automatically according to `CanGoBack` and `CanGoForward`.
 
 
