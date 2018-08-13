@@ -10,7 +10,7 @@ This project is a navigation framework for WPF, which implements the MVVMC patte
 
 In MVVMC, the View and ViewModel will request a navigation action from the controller. The controller will create the new View and ViewModel instances. This way, we achieve a separation of concerns, and the View & ViewModel are responsible only to themselves, and don't create or know about other Views.
 
-To read more about MVVMC and the motivation for this framework, see the original blog posts: [Part 1](http://michaelscodingspot.com/2017/02/06/wpf-page-navigation-like-mvc-building-mvvm-framework-controllers/), [Part 2](http://michaelscodingspot.com/2017/02/06/wpf-page-navigation-like-mvc-building-mvvm-framework-controllers/).
+To read more about MVVMC and the motivation for this framework, see the original blog posts: [Part 1](http://michaelscodingspot.com/2017/02/06/wpf-page-navigation-like-mvc-building-mvvm-framework-controllers/), [Part 2](https://michaelscodingspot.com/2017/02/15/wpf-page-navigation-like-mvc-part-2-mvvmc-framework/).
 
 # Documentation
 
