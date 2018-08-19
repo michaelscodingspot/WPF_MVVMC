@@ -54,6 +54,7 @@
     <Compile Include="IController.cs" />
     <Compile Include="INavigationExecutor.cs" />
     <Compile Include="GoBackCommand.cs" />
+    <Compile Include="LeavingPageEventArgs.cs" />
     <Compile Include="NavigationServiceProvider.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="NavigateCommand.cs" />

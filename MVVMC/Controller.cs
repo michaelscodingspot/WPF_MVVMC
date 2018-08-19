@@ -22,10 +22,10 @@ namespace MVVMC
         DiscardParameterInstance
     }
 
+    public enum NavigationMode { Regular, HistoryBack, HistoryForward };
 
     public abstract class Controller : IController
     {
-        enum NavigationMode { Regular, HistoryBack, HistoryForward };
 
         protected class HistoryItem
         {
@@ -175,14 +175,39 @@ namespace MVVMC
 
         private void ExecuteNavigationInternal(string pageName, object parameter, NavigationMode navigationMode, Dictionary<string, object> viewBag = null)
         {
+            bool shouldCancel = CallOnLeavingNavigation(ID);
+            if (shouldCancel)
+                return;
             ModifyHistory(pageName, parameter, navigationMode, viewBag);
-            NavigationExecutor.ExecuteNavigation(ID, pageName, parameter, viewBag);
+            NavigationExecutor.ExecuteNavigation(ID, pageName, parameter, navigationMode, viewBag);
             _navigationService.RunOnUIThread(() =>
             {
                 _navigationService.ChangeCanGoBack(ID);
                 _navigationService.ChangeCanGoForward(ID);
             });
+            var currentViewModel = GetCurrentViewModel();
+            if (currentViewModel != null)
+            {
+                _navigationService.RunOnUIThreadAsync(() => currentViewModel.OnLoad());
+            }
         }
+
+        /// <summary>
+        /// Return value indicates whether navigation should be cancelled
+        /// </summary>
+        private bool CallOnLeavingNavigation(string controllerId)
+        {
+            var vm = GetCurrentViewModel();
+            if (vm != null)
+            {
+                var ev = new LeavingPageEventArgs();
+                vm.OnLeave(ev);
+                return ev.CancelNavigation;
+            }
+            return false;
+        }
+
+
 
         private void ModifyHistory(string pageName, object parameter, NavigationMode navigationMode, Dictionary<string, object> viewBag)
         {

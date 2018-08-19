@@ -246,24 +246,26 @@ namespace MVVMC
             return instance as FrameworkElement;
         }
 
-        public void ExecuteNavigation(string controllerID, string pageName, object parameter, Dictionary<string, object> viewBag = null)
+        public void ExecuteNavigation(string controllerId, string pageName, object parameter, NavigationMode navigationMode, Dictionary<string, object> viewBag = null)
         {
             RunOnUIThread(() =>
             {
-                var prevPage = GetController(controllerID).GetCurrentPageName();
-                var target = CreateViewAndViewModel(controllerID, pageName);
+                var prevPage = GetController(controllerId).GetCurrentPageName();
+
+                var target = CreateViewAndViewModel(controllerId, pageName);
 
                 var vm = target.DataContext;
                 if (vm != null)
                 {
                     var mvvmcVM = vm as MVVMCViewModel;
+                    mvvmcVM.NavigatedToMode = navigationMode;
                     mvvmcVM.ViewBag = viewBag;
                     mvvmcVM.NavigationParameter = parameter;
                     mvvmcVM.Initialize();
                 }
 
-                ChangeContentInRegion(target, controllerID);
-                NavigationOccured?.Invoke(controllerID, prevPage, pageName);
+                ChangeContentInRegion(target, controllerId);
+                NavigationOccured?.Invoke(controllerId, prevPage, pageName);
             });
         }
 
@@ -282,6 +284,11 @@ namespace MVVMC
             {
                 _dispatcher.Invoke(act);
             }
+        }
+
+        public void RunOnUIThreadAsync(Action act)
+        {
+            _dispatcher.BeginInvoke(act);
         }
 
         public void AddGoBackCommand(GoBackCommand goBackCommand)
