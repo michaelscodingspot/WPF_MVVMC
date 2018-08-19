@@ -175,7 +175,7 @@ namespace MVVMC
 
         private void ExecuteNavigationInternal(string pageName, object parameter, NavigationMode navigationMode, Dictionary<string, object> viewBag = null)
         {
-            bool shouldCancel = CallOnLeavingNavigation(ID);
+            bool shouldCancel = CallOnLeavingNavigation(true);
             if (shouldCancel)
                 return;
             ModifyHistory(pageName, parameter, navigationMode, viewBag);
@@ -195,12 +195,15 @@ namespace MVVMC
         /// <summary>
         /// Return value indicates whether navigation should be cancelled
         /// </summary>
-        private bool CallOnLeavingNavigation(string controllerId)
+        internal bool CallOnLeavingNavigation(bool allowCancelNavigation)
         {
             var vm = GetCurrentViewModel();
             if (vm != null)
             {
-                var ev = new LeavingPageEventArgs();
+                var ev = new LeavingPageEventArgs()
+                {
+                    CancellingNavigationAllowed = allowCancelNavigation
+                };
                 vm.OnLeave(ev);
                 return ev.CancelNavigation;
             }

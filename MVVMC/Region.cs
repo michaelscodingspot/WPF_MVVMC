@@ -35,6 +35,12 @@ namespace MVVMC
 
         private void OnRegionUnloaded(object sender, RoutedEventArgs e)
         {
+            bool shouldCancel = _navigationService.GetController(ControllerID).CallOnLeavingNavigation(false);
+            if (shouldCancel)
+            {
+                throw new InvalidOperationException("Can't cancel navigation from 'OnLeave' when higher-level controller is the one navigating. " +
+                                                    "Check value 'CancellingNavigationAllowed' property in LeavingPageEventArgs.");
+            }
             _navigationService.RemoveController(ControllerID);
             _navigationService.RemoveRegion(this);
         }
