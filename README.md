@@ -10,7 +10,7 @@ This project is a navigation framework for WPF, which implements the MVVMC patte
 
 In MVVMC, the View and ViewModel will request a navigation action from the controller. The controller will create the new View and ViewModel instances. This way, we achieve a separation of concerns, and the View & ViewModel are responsible only to themselves, and don't create or know about other Views.
 
-To read more about MVVMC and the motivation for this framework, see the original blog posts: [Part 1](http://michaelscodingspot.com/2017/02/06/wpf-page-navigation-like-mvc-building-mvvm-framework-controllers/), [Part 2](http://michaelscodingspot.com/2017/02/06/wpf-page-navigation-like-mvc-building-mvvm-framework-controllers/).
+To read more about MVVMC and the motivation for this framework, see the original blog posts: [Part 1](http://michaelscodingspot.com/2017/02/06/wpf-page-navigation-like-mvc-building-mvvm-framework-controllers/), [Part 2](https://michaelscodingspot.com/2017/02/15/wpf-page-navigation-like-mvc-part-2-mvvmc-framework/).
 
 # Documentation
 
@@ -21,6 +21,7 @@ To read more about MVVMC and the motivation for this framework, see the original
 * [Views](#views)
 * [ViewModels](#viewmodels)
 * [Navigation service](#navigation-service)
+* [Go Back and Forward](#go-back-and-forward)
 
 ## Quickstart
 
@@ -318,5 +319,40 @@ INavigationService allows:
 * NavigateWithController<TViewModel>(object parameter) - The Page is according to the given TViewModel.
 
 Which basically means we can navigate to everything from anywhere.
+
+## Go Back and Forward:
+Historical navigation is available for each controller. So you can tell a controller to "Go Back" to the previous page or "Go Forward" again, after going back.
+
+
+Each controller now exposes __GoBack__ and __GoForward__ methods. These methods will execute navigation immediately, without invoking the Controller's Action. For example, in a wizard application we might have a __FirstStep__, __SecondStep__ and so on. If we are in the 3rd step, invoking __GoBack__ will  create and navigate to __SecondStepView__ and __SecondStepViewModel__ without actually invoking the `SecondStep()` method in the Controller.
+
+Each controller has a protected property __HistoryMode__ which is an enum with 2 modes: __DiscardParameterInstance__ (default) and __SaveParameterInstance__. This can be set in your Controllers, and even changed per navigation. On a regular navigation, we pass a Parameter and a ViewBag each time (which are saved in the created ViewModel). When in __DiscardParameterInstance__ mode, the "GoBack" method will expect a parameter and a ViewBag as parameters, since these were discarded after the navigation.
+
+```
+public virtual void GoBack(object parameter, Dictionary<string, object> viewBag)
+```
+
+In __SaveParameterInstance__ mode, the instances of __parameter__ and __viewBag__ are saved. You have the choice to pass a new parameter or use the previous one with the `public virtual void GoBack()` method.
+Note that in __SaveParameterInstance__ mode, instances are saved, which might lead to memory leaks.
+
+Additional methods and properties available are:
+* `ClearHistory()` method
+* `CanGoBack` and `CanGoForward` which can be overridden to custom logic (affects GoBackCommand and GoForwardCommand available in XAML).
+* `History` property, which is a List with navigation history.
+* __NavigationService__ exposes events: `CanGoBackChangedEvent` and `CanGoForwardChangedEvent`
+
+In XAML, you can use `mvvmc:GoBackCommand` and `mvvmc:GoForwardCommand` like this:
+
+```xaml
+xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
+...
+<Button Margin="5" Command="{mvvmc:GoBackCommand ControllerID='MainOperation',
+	HistoricalNavigationMode=UseCommandParameter}">Back</Button>
+<Button Margin="5" Command="{mvvmc:GoForwardCommand ControllerID='MainOperation',
+	HistoricalNavigationMode=UseCommandParameter}" 
+	CommandParameter="{Binding MyNavigationParameter}">Forward</Button>
+```
+__HistoricalNavigationMode__ can be either __UseCommandParameter__ or __UseSavedParameter__. When using __UseSavedParameter__, the Controller's HistoryMode should be set to __SaveParameterInstance__ or an exception will be thrown.
+The command is enabled or disabled automatically according to `CanGoBack` and `CanGoForward`.
 
 
