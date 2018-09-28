@@ -265,7 +265,7 @@ xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
 See more info on the ViewBag in the ViewModel section.
 
 ## ViewModels:
-A ViewModel is a regular class that must derive from __MVVMC.MVVMCViewModel__ or __MVVMC.MVVMCViewModel&lt;TController%gt;__. Creating a ViewModel for a Page is optional. The ViewModel's name must be [Page]ViewModel and in the same namespace as the Controller it is connected to.
+A ViewModel is a regular class that must derive from __MVVMC.MVVMCViewModel__ or __MVVMC.MVVMCViewModel&lt;TController&gt;__. Creating a ViewModel for a Page is optional. The ViewModel's name must be [Page]ViewModel and in the same namespace as the Controller it is connected to.
 
 __When deriving from MVVMC.MVVMCViewModel:__
 You can use __GetController()__ to get an __IController__ instance. With IController you can:
@@ -273,7 +273,7 @@ You can use __GetController()__ to get an __IController__ instance. With IContro
 * Navigate(string action, object parameter)
 * NavigateToInitial()
 	
-__When deriving from MVVMC.MVVMCViewModel&lt;TController%gt;__
+__When deriving from MVVMC.MVVMCViewModel&lt;TController&gt;__
 This is the recommended way to create ViewModels. You'll have to specify the controller type as TController.
 You will be able to use __TController GetExactController()__ to get an instance of the Controller the ViewModel is connected to.
 
