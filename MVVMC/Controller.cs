@@ -160,8 +160,12 @@ namespace MVVMC
         {
             History.Clear();
             HistoryCurrentItemIndex = -1;
+            _navigationService.RunOnUIThread(() =>
+            {
+                _navigationService.ChangeCanGoBack(ID);
+                _navigationService.ChangeCanGoForward(ID);
+            });
         }
-
 
         protected void ExecuteNavigation([CallerMemberName]string pageName = null)
         {
