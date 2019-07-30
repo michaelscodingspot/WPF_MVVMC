@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace MainApp.Pages.MainOperation
 {
-    public class InitialViewModel : MVVMCViewModel
+    public class MyViewModel123 : MVVMCViewModel
+    {
+        
+    }
+
+    public class InitialViewModel : MyViewModel123
     {
         
     }
