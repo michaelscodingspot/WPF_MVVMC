@@ -59,12 +59,11 @@ namespace MVVMC
         private void Initialize()
         {
             Assembly assembly = Assembly.GetCallingAssembly();
-            var assemblyTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(GetLoadableTypes);
+            var assemblyTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(GetLoadableTypes).ToList();
             _controllerTypes = assemblyTypes.Where(t => t.BaseType?.FullName == "MVVMC.Controller").ToList();
 
-
             _viewModelTypes = assemblyTypes
-                .Where(t => t.BaseType != null && t.BaseType?.FullName != null && t.BaseType.FullName.StartsWith("MVVMC.MVVMCViewModel"))
+                .Where(t => HasBaseType(t, "MVVMC.MVVMCViewModel"))
                 .ToList();
             var controllerNamespaces = _controllerTypes.Select(vm => vm.Namespace);
             _viewTypes = assemblyTypes.Where(t =>
@@ -72,6 +71,20 @@ namespace MVVMC
                 t.Name.EndsWith("View", StringComparison.InvariantCultureIgnoreCase)).ToList();
 
             _dispatcher = Dispatcher.CurrentDispatcher;
+        }
+
+        private bool HasBaseType(Type type, string baseTypeStr)
+        {
+            int count = 0;
+            while (type.BaseType != null && count++ < 10)
+            {
+                if (type.BaseType != null && type.BaseType?.FullName != null &&
+                    type.BaseType.FullName.StartsWith(baseTypeStr))
+                    return true;
+                type = type.BaseType;
+                
+            }
+            return false;
         }
 
         /// <summary>
