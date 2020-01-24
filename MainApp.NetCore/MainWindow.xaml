@@ -5,8 +5,31 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MainApp.NetCore"
         mc:Ignorable="d"
+        xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC.NetCore"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Margin="5">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                <Button Margin="5" Command="{mvvmc:NavigateCommand ControllerID='MainOperation'}">Home</Button>
+                <Button Margin="5" Command="{mvvmc:GoBackCommand ControllerID='MainOperation',
+					HistoricalNavigationMode=UseCommandParameter}">Back</Button>
+                <Button Margin="5" Command="{mvvmc:GoForwardCommand ControllerID='MainOperation',
+					HistoricalNavigationMode=UseCommandParameter}">Forward</Button>
+                <!--<Button Margin="5" Command="{mvvmc:NavigateCommand ControllerID='MainOperation'}">Forward</Button>-->
+                <Button Margin="5" Command="{mvvmc:NavigateCommand ControllerID='MainOperation', Action='About'}">About</Button>
+            </StackPanel>
+        </Grid>
+        <!--<Border Background="Beige" Padding="4" Grid.Row="0">
+            
+        </Border>-->
+
+        <Grid Margin="5" Grid.Row="1" VerticalAlignment="Stretch" >
+            <mvvmc:Region ControllerID="MainOperation" />
+        </Grid>
 
     </Grid>
 </Window>
