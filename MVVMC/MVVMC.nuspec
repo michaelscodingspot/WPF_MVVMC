@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Wpf.MVVMC</id>
-    <version>$version$</version>
+    <version>1.2.0.0</version>
     <title>Wpf.MVVMC</title>
     <authors>Michael Shpilt</authors>
     <owners>Michael Shpilt</owners>
@@ -10,6 +10,9 @@
     <projectUrl>https://github.com/michaelscodingspot/WPF_MVVMC</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Uses MVVMC (Model-View-ViewModel-Controller) pattern for navigating between screens in a WPF application.</description>
-    <tags>MVVMC WPF Navigation Controller MVVM MVVM-C</tags>
+    <tags>MVVMC WPF Navigation Controller MVVM MVVM-C</tags>	
   </metadata>
+  <files>
+		<file src="lib\**" target="lib"/>
+	</files>
 </package>
