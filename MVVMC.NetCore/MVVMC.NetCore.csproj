@@ -5,6 +5,10 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\MVVMC\lib</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\MVVMC\BaseViewModel.cs" Link="BaseViewModel.cs" />
     <Compile Include="..\MVVMC\Controller.cs" Link="Controller.cs" />
