@@ -12,6 +12,8 @@ In MVVMC, the View and ViewModel will request a navigation action from the contr
 
 To read more about MVVMC and the motivation for this framework, see the original blog posts: [Part 1](http://michaelscodingspot.com/2017/02/06/wpf-page-navigation-like-mvc-building-mvvm-framework-controllers/), [Part 2](https://michaelscodingspot.com/2017/02/15/wpf-page-navigation-like-mvc-part-2-mvvmc-framework/).
 
+>NOTE: The NuGet package now supports .NET Core 3.1+ WPF projects.
+
 # Documentation 
 
 * [Quickstart](#quickstart)
