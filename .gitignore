@@ -301,6 +301,3 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
-#NuGet lib
-lib/
