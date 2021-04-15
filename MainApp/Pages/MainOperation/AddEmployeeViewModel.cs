@@ -1,17 +1,11 @@
 ﻿using MainApp.Pages.AddWizard;
 using MVVMC;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MainApp.Pages.MainOperation
 {
     public class AddEmployeeViewModel : MVVMCViewModel
     {
-
         public string _nextCaption = "Next";
         public string NextCaption
         {
@@ -47,7 +41,7 @@ namespace MainApp.Pages.MainOperation
         private void RefreshButtons()
         {
             NextCaption = "Next";
-            var vm = GetController().GetCurrentViewModel();
+            var vm = NavigationServiceProvider.GetNavigationServiceInstance().GetController<AddWizardController>().GetCurrentViewModel();
             if (vm is AddWizard.ConfirmViewModel)
             {
                 NextCaption = "Add Employee";

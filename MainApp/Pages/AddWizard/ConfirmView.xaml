@@ -21,7 +21,8 @@
                 <TextBlock Text="Salary: "/>
                 <TextBlock DataContext="{mvvmc:ViewBagBinding Path=Employee}" Text="{Binding Salary}"/>
             </StackPanel>
-            <TextBlock>Are you sure you want to add the Employee? Click Next</TextBlock>
+			<TextBlock></TextBlock>
+			<TextBlock>Are you sure you want to add the Employee?</TextBlock>
             <Button Width="140" HorizontalAlignment="Left" Margin="0,5"
                 Command="{mvvmc:NavigateCommand ControllerID='MainOperation'}">Cancel
 				<Button.Template>
