@@ -5,9 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MainApp.Pages.AddWizard"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             Loaded="OnLoaded">
     <StackPanel HorizontalAlignment="Center">
         <TextBlock>Enter last name:</TextBlock>
-        <TextBox Text="{Binding LastName}" HorizontalAlignment="Left" Width="150"></TextBox>
+        <TextBox x:Name="LastName" Text="{Binding LastName}" HorizontalAlignment="Left" Width="150"></TextBox>
     </StackPanel>
 </UserControl>

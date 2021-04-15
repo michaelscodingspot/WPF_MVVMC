@@ -24,5 +24,10 @@ namespace MainApp.Pages.AddWizard
         {
             InitializeComponent();
         }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            FirstName.Focus();
+        }
     }
 }
