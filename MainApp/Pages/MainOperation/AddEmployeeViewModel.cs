@@ -23,17 +23,6 @@ namespace MainApp.Pages.MainOperation
             }
         }
 
-        public string _prevCaption = "Cancel";
-        public string PrevCaption
-        {
-            get { return _prevCaption; }
-            set
-            {
-                _prevCaption = value;
-                OnPropertyChanged();
-            }
-        }
-
         public ICommand _nextCommand;
         public ICommand NextCommand
         {
@@ -55,34 +44,14 @@ namespace MainApp.Pages.MainOperation
             }
         }
 
-        public ICommand _prevCommand;
-        public ICommand PrevCommand
-        {
-            get
-            {
-                if (_prevCommand == null)
-                    _prevCommand = new DelegateCommand(() =>
-                    {
-                        NavigationServiceProvider.GetNavigationServiceInstance().GetController<AddWizard.AddWizardController>().Prev();
-                        RefreshButtons();
-                    },
-                    () =>
-                    {
-                        return true;
-                    });
-                return _prevCommand;
-            }
-        }
-
         private void RefreshButtons()
         {
             NextCaption = "Next";
-            PrevCaption = "Back";
             var vm = GetController().GetCurrentViewModel();
-            if (vm is AddWizard.InitialViewModel)
-                PrevCaption = "Cancel";
-            else if (vm is AddWizard.ConfirmViewModel)
+            if (vm is AddWizard.ConfirmViewModel)
+            {
                 NextCaption = "Add Employee";
+            }
         }
     }
 }

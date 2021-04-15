@@ -3,6 +3,7 @@
     public enum HistoricalNavigationMode
     {
         UseSavedParameter,
-        UseCommandParameter
+        UseCommandParameter,
+        UseSavedViewModel,
     };
 }

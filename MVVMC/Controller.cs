@@ -15,11 +15,13 @@ namespace MVVMC
     /// When mode is SaveParameterInstance, on navigation, the parameter instance and ViewBag is saved until the history is cleared or Region is unloaded.
     /// This can be convenient to simply "GoBack()" with Controller, but can potentially cause memory leaks.
     /// When mode is DiscardParameterInstance, the parameter and ViewBag is not saved and a parameter is required on GoBack / GoForward operation
+    /// Wheb mode is SaveViewModel, the view model instances are saved. Going back/forward will use saved instances.
     /// </summary>
     public enum HistoryMode
     {
         SaveParameterInstance,
-        DiscardParameterInstance
+        DiscardParameterInstance,
+        SaveViewModel,
     }
 
     public enum NavigationMode { Regular, HistoryBack, HistoryForward };
@@ -31,6 +33,7 @@ namespace MVVMC
         {
             public string PageName { get; set; }
             public object NavigationParameter { get; set; }
+            public MVVMCViewModel ViewModel { get; set; }
             public Dictionary<string, object> ViewBag { get; set; }
             public HistoryMode HistoryModeAtTheTime { get; set; }
         }
@@ -48,7 +51,8 @@ namespace MVVMC
 
         public string ID { get; internal set; }
 
-        protected HistoryMode HistoryMode { get; set; } = HistoryMode.DiscardParameterInstance;
+        public HistoryMode HistoryMode { get; set; } = HistoryMode.DiscardParameterInstance;
+
         protected List<HistoryItem> History { get; private set; } = new List<HistoryItem>();
         protected int HistoryCurrentItemIndex { get; set; } = -1;
 
@@ -89,9 +93,11 @@ namespace MVVMC
         {
             CheckGoBackPossible();
             var historyItem = History[HistoryCurrentItemIndex - 1];
-            VerifyHistoryModeAtTheTimeWasSaveParameter(historyItem.HistoryModeAtTheTime);
+            VerifyHistoryModeAtTheTimeWasSaveParameterOrSaveViewModel(historyItem.HistoryModeAtTheTime);
+
             ExecuteNavigationInternal(historyItem.PageName, 
                 historyItem.NavigationParameter, 
+                historyItem.ViewModel,
                 NavigationMode.HistoryBack,
                 historyItem.ViewBag == null ? null : new Dictionary<string, object>(historyItem.ViewBag));
         }
@@ -100,7 +106,7 @@ namespace MVVMC
         {
             CheckGoBackPossible();
             var historyItem = History[HistoryCurrentItemIndex - 1];
-            ExecuteNavigationInternal(historyItem.PageName, parameter, NavigationMode.HistoryBack, viewBag);
+            ExecuteNavigationInternal(historyItem.PageName, parameter, null, NavigationMode.HistoryBack, viewBag);
         }
 
         private void CheckGoBackPossible()
@@ -115,9 +121,10 @@ namespace MVVMC
         {
             CheckGoForwardPossible();
             var historyItem = History[HistoryCurrentItemIndex + 1];
-            VerifyHistoryModeAtTheTimeWasSaveParameter(historyItem.HistoryModeAtTheTime);
+            VerifyHistoryModeAtTheTimeWasSaveParameterOrSaveViewModel(historyItem.HistoryModeAtTheTime);
             ExecuteNavigationInternal(historyItem.PageName,
                 historyItem.NavigationParameter,
+                historyItem.ViewModel,
                 NavigationMode.HistoryForward,
                 historyItem.ViewBag == null ? null : new Dictionary<string, object>(historyItem.ViewBag));
         }
@@ -126,12 +133,12 @@ namespace MVVMC
         {
             CheckGoForwardPossible();
             var historyItem = History[HistoryCurrentItemIndex + 1];
-            ExecuteNavigationInternal(historyItem.PageName, parameter, NavigationMode.HistoryForward, viewBag);
+            ExecuteNavigationInternal(historyItem.PageName, parameter, null, NavigationMode.HistoryForward, viewBag);
         }
 
-        private void VerifyHistoryModeAtTheTimeWasSaveParameter(HistoryMode historyItemHistoryModeAtTheTime)
+        private void VerifyHistoryModeAtTheTimeWasSaveParameterOrSaveViewModel(HistoryMode historyItemHistoryModeAtTheTime)
         {
-            if (historyItemHistoryModeAtTheTime != HistoryMode.SaveParameterInstance)
+            if (historyItemHistoryModeAtTheTime != HistoryMode.SaveParameterInstance && historyItemHistoryModeAtTheTime != HistoryMode.SaveViewModel)
             {
                 throw new InvalidOperationException("Can't GoBack / GoForward without parameter because at the navigation time, " +
                                                     "the history mode was 'DiscardParameterInstance'. You can use the other overload and specify parameter and viewbag, even if null");
@@ -169,21 +176,21 @@ namespace MVVMC
 
         protected void ExecuteNavigation([CallerMemberName]string pageName = null)
         {
-            ExecuteNavigationInternal(pageName, null, NavigationMode.Regular, null);
+            ExecuteNavigationInternal(pageName, null, null, NavigationMode.Regular, null);
         }
 
         protected void ExecuteNavigation(object parameter, Dictionary<string, object> viewBag, [CallerMemberName]string pageName = null)
         {
-            ExecuteNavigationInternal(pageName, parameter, NavigationMode.Regular, viewBag);
+            ExecuteNavigationInternal(pageName, parameter, null, NavigationMode.Regular, viewBag);
         }
 
-        private void ExecuteNavigationInternal(string pageName, object parameter, NavigationMode navigationMode, Dictionary<string, object> viewBag = null)
+        private void ExecuteNavigationInternal(string pageName, object parameter, MVVMCViewModel viewModel, NavigationMode navigationMode, Dictionary<string, object> viewBag = null)
         {
             bool shouldCancel = CallOnLeavingNavigation(true);
             if (shouldCancel)
                 return;
-            ModifyHistory(pageName, parameter, navigationMode, viewBag);
-            NavigationExecutor.ExecuteNavigation(ID, pageName, parameter, navigationMode, viewBag);
+            var newViewModel = NavigationExecutor.ExecuteNavigation(ID, pageName, parameter, viewModel, navigationMode, viewBag);
+            ModifyHistory(pageName, parameter, newViewModel, navigationMode, viewBag);
             _navigationService.RunOnUIThread(() =>
             {
                 _navigationService.ChangeCanGoBack(ID);
@@ -216,7 +223,7 @@ namespace MVVMC
 
 
 
-        private void ModifyHistory(string pageName, object parameter, NavigationMode navigationMode, Dictionary<string, object> viewBag)
+        private void ModifyHistory(string pageName, object parameter, MVVMCViewModel viewModel, NavigationMode navigationMode, Dictionary<string, object> viewBag)
         {
             switch (navigationMode)
             {
@@ -230,6 +237,7 @@ namespace MVVMC
                     {
                         PageName = pageName,
                         NavigationParameter = HistoryMode == HistoryMode.SaveParameterInstance ? parameter : null,
+                        ViewModel = HistoryMode == HistoryMode.SaveViewModel ? viewModel : null,
                         ViewBag = viewBag == null ? null : new Dictionary<string, object>(viewBag),
                         HistoryModeAtTheTime = this.HistoryMode
                     };

@@ -120,7 +120,7 @@ namespace MVVMC
             _regions.Remove(navigationArea);
         }
 
-        internal void CreateAndAddController(string controllerID)
+        internal void CreateAndAddController(string controllerID, HistoryMode? historyMode)
         {
             Type type = GetControllerTypeById(controllerID);
             var instance = Activator.CreateInstance(type);
@@ -128,6 +128,11 @@ namespace MVVMC
             controller.ID = controllerID;
             controller.SetNavigationService(this);
             controller.NavigationExecutor = this;
+            if (historyMode != null)
+            {
+                controller.HistoryMode = historyMode.Value;
+            }
+
             _controllers.Add(controller);
             ControllerCreated?.Invoke(controllerID);
         }
@@ -219,12 +224,18 @@ namespace MVVMC
         /// <param name="controllerID"></param>
         /// <param name="pageName"></param>
         /// <returns></returns>
-        internal FrameworkElement CreateViewAndViewModel(string controllerID, string pageName)
+        internal MVVMCViewModel CreateViewModel(string controllerID, string pageName, NavigationMode navigationMode, object parameter, Dictionary<string, object> viewBag)
         {
-            var view = CreateViewInstance(controllerID, pageName);
             var viewModel = CreateViewModelInstance(controllerID, pageName);
-            view.DataContext = viewModel;
-            return view;
+            if (viewModel != null)
+            {
+                viewModel.NavigatedToMode = navigationMode;
+                viewModel.ViewBag = viewBag;
+                viewModel.NavigationParameter = parameter;
+                viewModel.Initialize();
+            }
+
+            return viewModel;
         }
 
         internal MVVMCViewModel CreateViewModelInstance(string controllerID, string pageName)
@@ -259,27 +270,20 @@ namespace MVVMC
             return instance as FrameworkElement;
         }
 
-        public void ExecuteNavigation(string controllerId, string pageName, object parameter, NavigationMode navigationMode, Dictionary<string, object> viewBag = null)
+        public MVVMCViewModel ExecuteNavigation(string controllerId, string pageName, object parameter, MVVMCViewModel viewModelFromHistory, NavigationMode navigationMode, Dictionary<string, object> viewBag = null)
         {
+            var viewModel = viewModelFromHistory ?? CreateViewModel(controllerId, pageName, navigationMode, parameter, viewBag);
             RunOnUIThread(() =>
             {
                 var prevPage = GetController(controllerId).GetCurrentPageName();
 
-                var target = CreateViewAndViewModel(controllerId, pageName);
+                var view = CreateViewInstance(controllerId, pageName);
+                view.DataContext = viewModel;
 
-                var vm = target.DataContext;
-                if (vm != null)
-                {
-                    var mvvmcVM = vm as MVVMCViewModel;
-                    mvvmcVM.NavigatedToMode = navigationMode;
-                    mvvmcVM.ViewBag = viewBag;
-                    mvvmcVM.NavigationParameter = parameter;
-                    mvvmcVM.Initialize();
-                }
-
-                ChangeContentInRegion(target, controllerId);
+                ChangeContentInRegion(view, controllerId);
                 NavigationOccured?.Invoke(controllerId, prevPage, pageName);
             });
+            return viewModel;
         }
 
         private void ChangeContentInRegion(object content, string controllerID)

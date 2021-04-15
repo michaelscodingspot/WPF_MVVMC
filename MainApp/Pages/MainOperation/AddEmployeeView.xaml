@@ -12,10 +12,11 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <mvvmc:Region ControllerID="AddWizard" />
+        <mvvmc:Region ControllerID="AddWizard" HistoryMode="SaveViewModel" />
         
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
-            <Button Command="{Binding PrevCommand}" Content="{Binding PrevCaption}"></Button>
+			<Button Content="{Binding PrevCaption}"
+					Command="{mvvmc:GoBackCommand ControllerID='AddWizard', HistoricalNavigationMode=UseSavedViewModel}"></Button>
             <Button Margin="10,0" Command="{Binding NextCommand}" Content="{Binding NextCaption}"></Button>
         </StackPanel>
 

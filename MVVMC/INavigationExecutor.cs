@@ -8,6 +8,6 @@ namespace MVVMC
 {
     public interface INavigationExecutor
     {
-        void ExecuteNavigation(string controllerID, string pageName, object parameter, NavigationMode navigationMode, Dictionary<string, object> viewBag = null);
+        MVVMCViewModel ExecuteNavigation(string controllerID, string pageName, object parameter, MVVMCViewModel viewModel, NavigationMode navigationMode, Dictionary<string, object> viewBag = null);
     }
 }
