@@ -224,9 +224,13 @@ public class MטController : Controller
     public void HireEmployee(object employee)
     {
         if (CanHire(employee))
-		Navigate("HireStart", employee);
+	{
+	    Navigate("HireStart", employee);
+	}
     	else
-		HireError();
+	{
+	    HireError();
+	}
     }
     
     public void HireStart()
