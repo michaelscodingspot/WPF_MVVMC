@@ -325,38 +325,71 @@ INavigationService allows:
 Which basically means we can navigate to everything from anywhere.
 
 ## Go Back and Forward:
-Historical navigation is available for each controller. So you can tell a controller to "Go Back" to the previous page or "Go Forward" again, after going back.
+Historical navigation is available for each controller. You can tell a controller to "Go Back" to a previous page or "Go Forward" again after going back.
 
 
-Each controller now exposes __GoBack__ and __GoForward__ methods. These methods will execute navigation immediately, without invoking the Controller's Action. For example, in a wizard application we might have a __FirstStep__, __SecondStep__ and so on. If we are in the 3rd step, invoking __GoBack__ will  create and navigate to __SecondStepView__ and __SecondStepViewModel__ without actually invoking the `SecondStep()` method in the Controller.
+Each controller exposes the `GoBack` and `GoForward` methods. These methods will execute navigation immediately, without invoking the Controller's Action method. For example, in a wizard application we might have a __FirstStep__, __SecondStep__, and __ThirdStep__ pages. If we are in the __ThirdStep__, invoking __GoBack__ will  create and navigate to __SecondStepView__ and __SecondStepViewModel__ without actually invoking the `SecondStep()` method in the Controller.
 
-Each controller has a protected property __HistoryMode__ which is an enum with 2 modes: __DiscardParameterInstance__ (default) and __SaveParameterInstance__. This can be set in your Controllers, and even changed per navigation. On a regular navigation, we pass a Parameter and a ViewBag each time (which are saved in the created ViewModel). When in __DiscardParameterInstance__ mode, the "GoBack" method will expect a parameter and a ViewBag as parameters, since these were discarded after the navigation.
+Each controller has a __HistoryMode__ property, which can be set to: __DiscardParameterInstance__ (default) , __SaveViewModel__ (v2.3.0+), or __SaveParameterInstance__. According to this mode, each navigation saves the view model or the navigation parameter and view bag. This allows to restore the state of the page when going back or forward in history.
 
+You can set this mode in your controller's constructor like this:
+
+```csharp
+public class MyController : Controller
+{
+    public MyController()
+    {
+        HistoryMode = HistoryMode.DiscardParameterInstance;
+    }
+}
 ```
+
+Or in XAML when defining `Region` like this: (only from version 2.3.0+)
+
+```xaml
+<mvvmc:Region ControllerID="MyController" HistoryMode="SaveViewModel" />
+```
+
+When in __DiscardParameterInstance__ mode, the `GoBack` method will expect a __parameter__ and a __ViewBag__ as parameters, since these were discarded after the navigation. Here is the method's signature:
+
+```csharp
 public virtual void GoBack(object parameter, Dictionary<string, object> viewBag)
 ```
 
-In __SaveParameterInstance__ mode, the instances of __parameter__ and __viewBag__ are saved. You have the choice to pass a new parameter or use the previous one with the `public virtual void GoBack()` method.
-Note that in __SaveParameterInstance__ mode, instances are saved, which might lead to memory leaks.
+Note: Both the `GoBack` and `GoForward` methods can be overridden in your Controller.
 
-Additional methods and properties available are:
+When in history modes __SaveParameterInstance__ or __SaveViewModel__, you can use the `GoBack` and `GoForward` methods that don't accept any parameters. __SaveParameterInstance__ will navigate with the same **parameter** and **ViewBag**. Whereas **SaveViewModel** will reuse the same __ViewModel__ instance as in the historical navigation.
+
+Note that in both of those modes, parameter or view model instances are saved in memory. This can potentially lead to bigger memory footprints or memory leaks (although should be fine in most cases).
+
+Additional methods and properties available in a Controller object are:
 * `ClearHistory()` method
 * `CanGoBack` and `CanGoForward` which can be overridden to custom logic (affects GoBackCommand and GoForwardCommand available in XAML).
 * `History` property, which is a List with navigation history.
-* __NavigationService__ exposes events: `CanGoBackChangedEvent` and `CanGoForwardChangedEvent`
+
+__NavigationService__ exposes the events: `CanGoBackChangedEvent` and `CanGoForwardChangedEvent`
+
+### Going Back and Forward from XAML
 
 In XAML, you can use `mvvmc:GoBackCommand` and `mvvmc:GoForwardCommand` like this:
 
 ```xaml
 xmlns:mvvmc="clr-namespace:MVVMC;assembly=MVVMC"
 ...
-<Button Margin="5" Command="{mvvmc:GoBackCommand ControllerID='MainOperation',
-	HistoricalNavigationMode=UseCommandParameter}">Back</Button>
-<Button Margin="5" Command="{mvvmc:GoForwardCommand ControllerID='MainOperation',
+<Button Command="{mvvmc:GoBackCommand ControllerID='MainOperation',
+	HistoricalNavigationMode=UseSavedViewModel}">Back</Button>
+
+<Button Command="{mvvmc:GoForwardCommand ControllerID='MainOperation',
+	HistoricalNavigationMode=UseSavedParameter}">Forward</Button>
+
+<Button Command="{mvvmc:GoBackCommand ControllerID='MainOperation',
 	HistoricalNavigationMode=UseCommandParameter}" 
-	CommandParameter="{Binding MyNavigationParameter}">Forward</Button>
+	CommandParameter="{Binding MyNavigationParameter}">Back</Button>
 ```
-__HistoricalNavigationMode__ can be either __UseCommandParameter__ or __UseSavedParameter__. When using __UseSavedParameter__, the Controller's HistoryMode should be set to __SaveParameterInstance__ or an exception will be thrown.
-The command is enabled or disabled automatically according to `CanGoBack` and `CanGoForward`.
+__HistoricalNavigationMode__ can be __UseSavedViewModel__,  __UseCommandParameter__, or __UseSavedParameter__. 
+
+When using __UseSavedParameter__, the controller's HistoryMode should be set to __SaveParameterInstance__ or an exception will be thrown. When using __UseSavedViewModel__, the controller's HistoryMode should be set to **SaveViewModel**. 
+
+When using __UseCommandParameter__ (the default), you can set or bind to `CommandParameter`, which will act as the navigation parameter. You can also set the command's `ViewBag` property.  The button will be enabled or disabled automatically according to `CanGoBack` and `CanGoForward`.
 
 
