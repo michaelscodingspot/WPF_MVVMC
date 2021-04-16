@@ -237,8 +237,8 @@ namespace MVVMC
                     {
                         PageName = pageName,
                         NavigationParameter = HistoryMode == HistoryMode.SaveParameterInstance ? parameter : null,
+                        ViewBag = HistoryMode == HistoryMode.SaveParameterInstance ? new Dictionary<string, object>(viewBag) : null,
                         ViewModel = HistoryMode == HistoryMode.SaveViewModel ? viewModel : null,
-                        ViewBag = viewBag == null ? null : new Dictionary<string, object>(viewBag),
                         HistoryModeAtTheTime = this.HistoryMode
                     };
                     History.Add(newHistoryItem);
